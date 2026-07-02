@@ -1,0 +1,11 @@
+name: Jarona
+description: $description
+version: '${version}'
+
+main: pro.fazeclan.river.jarona.Jarona
+bootstrapper: pro.fazeclan.river.jarona.JaronaBootstrap
+loader: pro.fazeclan.river.jarona.JaronaLoader
+api-version: '26.2'
+load: STARTUP
+
+authors: [ riversflowing ]
