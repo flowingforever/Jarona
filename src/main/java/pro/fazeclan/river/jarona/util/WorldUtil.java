@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class WorldUtil {
 
-    public World createWorld(NamespacedKey key) {
+    public static World createWorld(NamespacedKey key) {
         var worldCreator = new WorldCreator(key);
         return worldCreator.seed(ThreadLocalRandom.current().nextLong())
                 .environment(World.Environment.NORMAL)
@@ -21,7 +21,7 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public World createWorld(NamespacedKey key, World.Environment env) {
+    public static World createWorld(NamespacedKey key, World.Environment env) {
         var worldCreator = new WorldCreator(key);
         return worldCreator.seed(ThreadLocalRandom.current().nextLong())
                 .environment(env)
@@ -31,7 +31,7 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public World createWorld(NamespacedKey key, WorldType type) {
+    public static World createWorld(NamespacedKey key, WorldType type) {
         var worldCreator = new WorldCreator(key);
         return worldCreator.seed(ThreadLocalRandom.current().nextLong())
                 .environment(World.Environment.NORMAL)
@@ -41,7 +41,7 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public World createWorld(NamespacedKey key, String genSet) {
+    public static World createWorld(NamespacedKey key, String genSet) {
         var worldCreator = new WorldCreator(key);
         return worldCreator.seed(ThreadLocalRandom.current().nextLong())
                 .environment(World.Environment.NORMAL)
@@ -51,7 +51,7 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public World createWorld(NamespacedKey key, boolean structures) {
+    public static World createWorld(NamespacedKey key, boolean structures) {
         var worldCreator = new WorldCreator(key);
         return worldCreator.seed(ThreadLocalRandom.current().nextLong())
                 .environment(World.Environment.NORMAL)
@@ -61,11 +61,11 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public World createWorld(WorldCreator wc) {
+    public static World createWorld(WorldCreator wc) {
         return wc.createWorld();
     }
 
-    public World createVoidWorld(NamespacedKey key) {
+    public static World createVoidWorld(NamespacedKey key) {
         return new WorldCreator(key)
                 .seed(ThreadLocalRandom.current().nextLong())
                 .type(WorldType.FLAT)
@@ -74,7 +74,7 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public void removeWorld(String name) {
+    public static void removeWorld(String name) {
         var world = new File(Bukkit.getWorldContainer().getAbsolutePath() + "/" + name);
         try {
             do {

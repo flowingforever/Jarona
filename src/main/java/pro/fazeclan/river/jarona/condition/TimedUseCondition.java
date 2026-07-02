@@ -1,10 +1,24 @@
 package pro.fazeclan.river.jarona.condition;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.UUID;
 import java.util.function.Function;
 
 public class TimedUseCondition extends TimedCondition {
 
+    /**
+     * -- GETTER --
+     *  Gets the max amount of uses under this condition.
+     * -- SETTER --
+     *  Sets the max amount of uses under this condition.
+     *
+     @return The max uses
+      * @param value New value representing the max uses
+     */
+    @Setter
+    @Getter
     protected int maxUses = 0;
 
     public TimedUseCondition(Type type) {
@@ -43,6 +57,17 @@ public class TimedUseCondition extends TimedCondition {
         this.maxUses = maxUses;
     }
 
+    /**
+     * -- SETTER --
+     *  Sets the amount of uses directly.
+     * -- GETTER --
+     *  Gets the amount of uses under this condition.
+     *
+     @param value New value representing the uses
+      * @return The uses
+     */
+    @Getter
+    @Setter
     protected int uses = 0;
 
     @Override
@@ -51,42 +76,10 @@ public class TimedUseCondition extends TimedCondition {
     }
 
     /**
-     * Sets the amount of uses directly.
-     * @param value New value representing the uses
-     */
-    public void setUses(int value) {
-        this.uses = value;
-    }
-
-    /**
-     * Gets the amount of uses under this condition.
-     * @return The uses
-     */
-    public int getUses() {
-        return uses;
-    }
-
-    /**
      * Increments the amount of uses by one.
      */
     public void increaseUses() {
         this.uses++;
-    }
-
-    /**
-     * Sets the max amount of uses under this condition.
-     * @param value New value representing the max uses
-     */
-    public void setMaxUses(int value) {
-        this.maxUses = value;
-    }
-
-    /**
-     * Gets the max amount of uses under this condition.
-     * @return The max uses
-     */
-    public int getMaxUses() {
-        return maxUses;
     }
 
     @Override
