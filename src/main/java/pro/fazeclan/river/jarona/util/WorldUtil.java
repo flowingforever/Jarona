@@ -86,4 +86,12 @@ public class WorldUtil {
         }
     }
 
+    public static World getMainWorld() {
+        var levelName = ServerUtil.readServerProperties("level-name");
+        if (levelName == null) {
+            return null;
+        }
+        return Bukkit.getWorld(levelName);
+    }
+
 }
