@@ -8,10 +8,12 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
 }
 
 dependencies {
     paperweight.paperDevBundle("26.2.build.+")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
 }
 
 java {

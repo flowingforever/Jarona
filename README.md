@@ -7,3 +7,4 @@ Feel free to look around, there's not much currently other than a Condition syst
 
 ### Running on Minecraft 26.2
 ### Running on [PaperMC](https://papermc.io) (No plans to support Spigot)
+### Requires [PacketEvents](https://modrinth.com/plugin/packetevents)
