@@ -2,9 +2,12 @@ package pro.fazeclan.river.jarona;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+import pro.fazeclan.river.jarona.command.StartCommand;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 
@@ -31,6 +34,13 @@ public final class Jarona extends JavaPlugin {
         this.conditionManager = new ConditionManager();
 
         this.conditionManager.initTasks();
+
+        var command = Commands.literal("jarona")
+                .then(StartCommand.command())
+                .build();
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            commands.registrar().register(command);
+        });
     }
 
     @Override

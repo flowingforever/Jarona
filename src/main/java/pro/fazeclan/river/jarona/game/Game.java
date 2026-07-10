@@ -11,9 +11,12 @@ public abstract class Game {
 
     @Getter
     protected final NamespacedKey key;
+    @Getter
+    protected final boolean worldRequired;
 
-    public Game(NamespacedKey key) {
+    public Game(NamespacedKey key, boolean worldRequired) {
         this.key = key;
+        this.worldRequired = worldRequired;
     }
 
     public abstract void init(World world, List<Player> players);

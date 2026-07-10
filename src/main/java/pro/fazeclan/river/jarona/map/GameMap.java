@@ -14,14 +14,14 @@ public class GameMap {
     final String name;
     final NamespacedKey id;
     final String credit;
-    final File world;
+    final File structure;
     final WorldlessLocation spawn;
 
-    public GameMap(String name, NamespacedKey id, String credit, File world, WorldlessLocation spawn) {
+    public GameMap(String name, NamespacedKey id, String credit, File structure, WorldlessLocation spawn) {
         this.name = name;
         this.id = id;
         this.credit = credit;
-        this.world = world;
+        this.structure = structure;
         this.spawn = spawn;
     }
 

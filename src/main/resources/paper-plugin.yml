@@ -9,3 +9,9 @@ api-version: '26.2'
 load: STARTUP
 
 authors: [ riversflowing ]
+
+dependencies:
+  server:
+    packetevents:
+      load: AFTER
+      required: true
