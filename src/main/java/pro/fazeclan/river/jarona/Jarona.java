@@ -23,6 +23,9 @@ public final class Jarona extends JavaPlugin {
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
+
+        this.gameManager = new GameManager();
+        this.conditionManager = new ConditionManager();
     }
 
     @Override
@@ -30,9 +33,6 @@ public final class Jarona extends JavaPlugin {
         PacketEvents.getAPI().init();
 
         // Plugin startup logic
-        this.gameManager = new GameManager();
-        this.conditionManager = new ConditionManager();
-
         this.conditionManager.initTasks();
 
         var command = Commands.literal("jarona")
