@@ -26,14 +26,11 @@ public class GameUtil {
         }
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.setGameMode(GameMode.SPECTATOR);
             player.teleport(new Location(world, 0, 10, 0));
-            resetPlayer(player, GameMode.ADVENTURE);
+            resetPlayer(player, GameMode.SPECTATOR);
         });
         game.init(world, world.getPlayers());
-        var task = Bukkit.getScheduler().runTaskTimer(Jarona.getInstance(), () -> {
-            game.tick(world, world.getPlayers());
-        }, 1, 1);
+        var task = Bukkit.getScheduler().runTaskTimer(Jarona.getInstance(), () -> game.tick(world, world.getPlayers()), 1, 1);
         world.getPersistentDataContainer().set(Jarona.getKey("loop_id"), PersistentDataType.INTEGER, task.getTaskId());
         manager.addActiveGame(uuid, key);
     }
@@ -43,7 +40,7 @@ public class GameUtil {
         if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
             return;
         }
-        var worldName = UUID.fromString(world.getName());
+        var worldName = UUID.fromString(world.getKey().getKey());
         if (!manager.getActiveGames().containsKey(worldName)) {
             return;
         }

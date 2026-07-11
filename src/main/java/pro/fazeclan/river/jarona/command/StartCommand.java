@@ -18,7 +18,7 @@ public class StartCommand {
                                 .executes(ctx -> {
                                     final Game game = ctx.getArgument("game", Game.class);
 
-                                    GameUtil.startGame(game.getKey(), game.isWorldRequired());
+                                    GameUtil.startGame(game.getKey(), game.isVoidWorld());
 
                                     return Command.SINGLE_SUCCESS;
                                 })
