@@ -1,29 +1,52 @@
 package pro.fazeclan.river.jarona.util;
 
+import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.map.GameMap;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 public class GameUtil {
 
     public static void startGame(NamespacedKey key, boolean voidWorld) {
+        var uuid = UUID.randomUUID();
+        NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
+        if (voidWorld) {
+            startGame(key, WorldUtil.createVoidWorld(worldKey));
+        } else {
+            startGame(key, WorldUtil.createWorld(worldKey));
+        }
+    }
+
+    public static void startGameWithMap(NamespacedKey key, GameMap map) {
+        var uuid = UUID.randomUUID();
+        NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
+
+        var worldFolder = new File(Jarona.getInstance().getServer().getWorldContainer(), uuid.toString());
+        worldFolder.mkdirs();
+        try {
+            FileUtils.copyDirectory(map.getWorld(), worldFolder);
+        } catch (IOException e) {
+            Jarona.getInstance().getLogger().warning("The world may not have been entirely created.");
+        }
+
+        var world = WorldUtil.createWorld(worldKey);
+        startGame(key, world);
+    }
+
+    public static void startGame(NamespacedKey key, World world) {
         var manager = Jarona.getInstance().getGameManager();
         var game = manager.getRegistry().get(key);
         if (game == null) {
             return;
         }
-        World world;
         var uuid = UUID.randomUUID();
-        NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
-        if (voidWorld) {
-            world = WorldUtil.createVoidWorld(worldKey);
-        } else {
-            world = WorldUtil.createWorld(worldKey);
-        }
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.teleport(new Location(world, 0, 10, 0));

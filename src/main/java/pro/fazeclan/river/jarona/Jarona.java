@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pro.fazeclan.river.jarona.command.StartCommand;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
+import pro.fazeclan.river.jarona.map.GameMapManager;
 
 public final class Jarona extends JavaPlugin {
 
@@ -19,6 +20,9 @@ public final class Jarona extends JavaPlugin {
     @Getter
     GameManager gameManager;
 
+    @Getter
+    GameMapManager mapManager;
+
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -26,6 +30,7 @@ public final class Jarona extends JavaPlugin {
 
         this.gameManager = new GameManager();
         this.conditionManager = new ConditionManager();
+        this.mapManager = new GameMapManager();
     }
 
     @Override
@@ -34,6 +39,7 @@ public final class Jarona extends JavaPlugin {
 
         // Plugin startup logic
         this.conditionManager.initTasks();
+        this.mapManager.reloadRegistry();
 
         var command = Commands.literal("jarona")
                 .then(StartCommand.command())
