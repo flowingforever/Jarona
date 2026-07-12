@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
@@ -99,6 +100,16 @@ public class WorldlessLocation {
         location.setPitch(container.getOrDefault(Jarona.getKey("pitch"), PersistentDataType.FLOAT, 0f));
 
         return location;
+    }
+
+    public static WorldlessLocation deserialize(String name, YamlConfiguration config) {
+        return new WorldlessLocation(
+                config.getDouble(name + ".x", 0.0),
+                config.getDouble(name + ".y", 0.0),
+                config.getDouble(name + ".z", 0.0),
+                (float) config.getDouble(name + ".yaw", 0.0),
+                (float) config.getDouble(name + ".pitch", 0.0)
+        );
     }
 
 }

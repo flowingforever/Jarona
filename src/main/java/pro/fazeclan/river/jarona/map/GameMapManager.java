@@ -38,14 +38,8 @@ public class GameMapManager {
                             id,
                             config.getString("credits", "..."),
                             world,
-                            new WorldlessLocation(
-                                    config.getDouble("spawn.x", 0.0),
-                                    config.getDouble("spawn.y", 0.0),
-                                    config.getDouble("spawn.z", 0.0),
-                                    (float) config.getDouble("spawn.yaw", 0.0),
-                                    (float) config.getDouble("spawn.pitch", 0.0)
-                            ))
-                    );
+                            WorldlessLocation.deserialize("spawn", config)
+                    ));
                 });
 
     }

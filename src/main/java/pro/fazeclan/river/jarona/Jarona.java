@@ -7,10 +7,13 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+import pro.fazeclan.river.jarona.command.MapCommand;
 import pro.fazeclan.river.jarona.command.StartCommand;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.map.GameMapManager;
+import pro.fazeclan.river.jarona.nametag.NametagManager;
+import pro.fazeclan.river.jarona.nametag.NametagScheduler;
 
 public final class Jarona extends JavaPlugin {
 
@@ -23,6 +26,11 @@ public final class Jarona extends JavaPlugin {
     @Getter
     GameMapManager mapManager;
 
+    @Getter
+    NametagManager nametagManager;
+    @Getter
+    NametagScheduler nametagScheduler;
+
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -31,6 +39,8 @@ public final class Jarona extends JavaPlugin {
         this.gameManager = new GameManager();
         this.conditionManager = new ConditionManager();
         this.mapManager = new GameMapManager();
+        this.nametagManager = new NametagManager();
+        this.nametagScheduler = new NametagScheduler();
     }
 
     @Override
@@ -40,9 +50,11 @@ public final class Jarona extends JavaPlugin {
         // Plugin startup logic
         this.conditionManager.initTasks();
         this.mapManager.reloadRegistry();
+        this.nametagScheduler.start();
 
         var command = Commands.literal("jarona")
                 .then(StartCommand.command())
+                .then(MapCommand.command())
                 .build();
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(command);

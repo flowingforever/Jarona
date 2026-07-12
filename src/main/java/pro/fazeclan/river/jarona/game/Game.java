@@ -13,10 +13,13 @@ public abstract class Game {
     protected final NamespacedKey key;
     @Getter
     protected final boolean voidWorld;
+    @Getter
+    protected final boolean requiresMap;
 
-    public Game(NamespacedKey key, boolean voidWorld) {
+    public Game(NamespacedKey key, boolean voidWorld, boolean requiresMap) {
         this.key = key;
         this.voidWorld = voidWorld;
+        this.requiresMap = requiresMap;
     }
 
     public abstract void init(World world, List<Player> players);

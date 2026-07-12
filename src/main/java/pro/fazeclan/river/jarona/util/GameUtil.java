@@ -28,7 +28,15 @@ public class GameUtil {
         var uuid = UUID.randomUUID();
         NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
 
-        var worldFolder = new File(Jarona.getInstance().getServer().getWorldContainer(), uuid.toString());
+        /*
+        ok ugh paper actually respects minecraft's world format now so i gotta update this ughhhhh
+
+        so copy folder contents to world folder > dimensions > namespace > id
+         */
+        var worldFolder = Jarona.getInstance().getServer().getLevelDirectory()
+                .toAbsolutePath()
+                .resolve("dimensions/" + key.namespace() + "/" + uuid)
+                .toFile();
         worldFolder.mkdirs();
         try {
             FileUtils.copyDirectory(map.getWorld(), worldFolder);
