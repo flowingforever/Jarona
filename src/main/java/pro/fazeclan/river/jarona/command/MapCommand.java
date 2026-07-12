@@ -11,7 +11,7 @@ public class MapCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> command() {
         return Commands.literal("map")
-                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.start"))
+                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.map"))
                 .then(
                         Commands.literal("reload")
                                 .executes(ctx -> {
