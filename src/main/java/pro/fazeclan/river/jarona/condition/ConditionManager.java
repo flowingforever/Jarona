@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -19,9 +20,19 @@ public class ConditionManager {
 
     @Getter
     private final ConcurrentHashMap<UUID, Conditions> playerConditionMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, Conditions> gameConditionMap = new ConcurrentHashMap<>();
 
     public Conditions getPlayerConditions(Player player) {
         return playerConditionMap.compute(player.getUniqueId(), (k, c) -> {
+            if (c == null) {
+                return new Conditions();
+            }
+            return c;
+        });
+    }
+
+    public Conditions getGameConditions(UUID game) {
+        return gameConditionMap.compute(game, (k, c) -> {
             if (c == null) {
                 return new Conditions();
             }
@@ -71,8 +82,23 @@ public class ConditionManager {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 StringBuilder actionbar = new StringBuilder();
 
-                var sortedConditions = getPlayerConditions(player).getConditionMap().values().stream().sorted().toList();
-                for (Condition condition : sortedConditions) {
+                var worldName = player.getWorld().getKey().getKey();
+                try {
+                    var sortedGameConditions = getGameConditions(UUID.fromString(worldName)).getConditionMap().values().stream().sorted().toList();
+                    for (Condition condition : sortedGameConditions) {
+                        if (condition.getHudCondition().apply(condition)) {
+                            if (condition.getHud() != null) {
+                                if (!actionbar.isEmpty()) {
+                                    actionbar.append(" <gray>||</gray> ");
+                                }
+                                actionbar.append(condition.getHud());
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {}
+
+                var sortedPlayerConditions = getPlayerConditions(player).getConditionMap().values().stream().sorted().toList();
+                for (Condition condition : sortedPlayerConditions) {
                     if (condition.getHudCondition().apply(condition)) {
                         if (condition.getHud() != null) {
                             if (!actionbar.isEmpty()) {

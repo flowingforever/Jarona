@@ -108,7 +108,7 @@ public class Nametag {
         }
     }
 
-    private Component getText() {
+    public Component getText() {
         return ServerUtil.formatComponent("<gray>" + player.getName() + "</gray>");
     }
 
