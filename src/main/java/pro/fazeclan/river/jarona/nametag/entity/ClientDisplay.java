@@ -18,7 +18,6 @@ public class ClientDisplay extends ClientEntity {
     @Setter
     protected Vector3f translation = null;
     @Getter
-    @Setter
     protected Vector3f scale = null;
     @Getter
     @Setter
