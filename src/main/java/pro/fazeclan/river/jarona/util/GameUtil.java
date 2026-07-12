@@ -8,7 +8,6 @@ import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.map.GameMap;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -28,11 +27,6 @@ public class GameUtil {
         var uuid = UUID.randomUUID();
         NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
 
-        /*
-        ok ugh paper actually respects minecraft's world format now so i gotta update this ughhhhh
-
-        so copy folder contents to world folder > dimensions > namespace > id
-         */
         var worldFolder = Jarona.getInstance().getServer().getLevelDirectory()
                 .toAbsolutePath()
                 .resolve("dimensions/" + key.namespace() + "/" + uuid)
@@ -49,21 +43,23 @@ public class GameUtil {
     }
 
     public static void startGame(NamespacedKey key, World world) {
-        var manager = Jarona.getInstance().getGameManager();
-        var game = manager.getRegistry().get(key);
+        var plugin = Jarona.getInstance();
+        var queueManager = plugin.getQueueManager();
+        var gameManager = plugin.getGameManager();
+        var game = gameManager.getRegistry().get(key);
         if (game == null) {
             return;
         }
         var uuid = UUID.randomUUID();
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
-        Bukkit.getOnlinePlayers().forEach(player -> {
+        queueManager.getAndRemovePlayersQueued(game).forEach(player -> {
             player.teleport(new Location(world, 0, 10, 0));
             resetPlayer(player, GameMode.SPECTATOR);
         });
         game.init(world, world.getPlayers());
         var task = Bukkit.getScheduler().runTaskTimer(Jarona.getInstance(), () -> game.tick(world, world.getPlayers()), 1, 1);
         world.getPersistentDataContainer().set(Jarona.getKey("loop_id"), PersistentDataType.INTEGER, task.getTaskId());
-        manager.addActiveGame(uuid, key);
+        gameManager.addActiveGame(uuid, key);
     }
 
     public static void endGame(World world) {

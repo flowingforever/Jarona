@@ -20,7 +20,7 @@ public class QueueManager {
                 .filter(entry -> Objects.equals(entry.getValue(), gameKey))
                 .map(Map.Entry::getKey)
                 .map(Bukkit::getPlayer)
-                .filter(Objects::isNull)
+                .filter(Objects::nonNull)
                 .toList();
     }
 

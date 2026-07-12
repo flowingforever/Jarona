@@ -6,6 +6,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.command.argument.GameArgument;
@@ -43,40 +44,59 @@ public class QueueCommand {
 
                                     return Command.SINGLE_SUCCESS;
                                 })
-                )
-                .then(
-                        Commands.argument("players", ArgumentTypes.players())
-                                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.queue"))
-                                .then(Commands.argument("game", new GameArgument())
-                                        .executes(ctx -> {
-                                            var source = ctx.getSource().getSender();
-                                            var targetResolver = ctx.getArgument("players", PlayerSelectorArgumentResolver.class);
-                                            var players = targetResolver.resolve(ctx.getSource());
-                                            var manager = Jarona.getInstance().getQueueManager();
-                                            var game = ctx.getArgument("game", Game.class);
+                                .then(
+                                        Commands.argument("players", ArgumentTypes.players())
+                                                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.queue"))
+                                                .executes(ctx -> {
+                                                    var source = ctx.getSource().getSender();
+                                                    var targetResolver = ctx.getArgument("players", PlayerSelectorArgumentResolver.class);
+                                                    var players = targetResolver.resolve(ctx.getSource());
+                                                    var manager = Jarona.getInstance().getQueueManager();
+                                                    var game = ctx.getArgument("game", Game.class);
 
-                                            for (Player player : players) {
-                                                if (manager.isQueued(player, game)) {
-                                                    manager.unqueuePlayer(player);
-                                                    player.sendMessage(ServerUtil.formatComponent(
-                                                            "<red>You have been unqueued for " + game.getKey() + "!</red>"
-                                                    ));
-                                                    source.sendMessage(ServerUtil.formatComponent(
-                                                            "<red>" + player.getName() + " has been unqueued for " + game.getKey() + "!</red>"
-                                                    ));
-                                                } else {
-                                                    manager.queuePlayer(player, game);
-                                                    player.sendMessage(ServerUtil.formatComponent(
-                                                            "<green>You have been queued for " + game.getKey() + "!</green>"
-                                                    ));
-                                                    source.sendMessage(ServerUtil.formatComponent(
-                                                            "<green>" + player.getName() + " has been queued for " + game.getKey() + "!</green>"
-                                                    ));
-                                                }
-                                            }
+                                                    for (Player player : players) {
+                                                        if (manager.isQueued(player, game)) {
+                                                            manager.unqueuePlayer(player);
+                                                            player.sendMessage(ServerUtil.formatComponent(
+                                                                    "<red>You have been unqueued for " + game.getKey() + "!</red>"
+                                                            ));
+                                                            source.sendMessage(ServerUtil.formatComponent(
+                                                                    "<red>" + player.getName() + " has been unqueued for " + game.getKey() + "!</red>"
+                                                            ));
+                                                        } else {
+                                                            manager.queuePlayer(player, game);
+                                                            player.sendMessage(ServerUtil.formatComponent(
+                                                                    "<green>You have been queued for " + game.getKey() + "!</green>"
+                                                            ));
+                                                            source.sendMessage(ServerUtil.formatComponent(
+                                                                    "<green>" + player.getName() + " has been queued for " + game.getKey() + "!</green>"
+                                                            ));
+                                                        }
+                                                    }
 
-                                            return Command.SINGLE_SUCCESS;
-                                        }))
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                )
+                                .then(
+                                        Commands.literal("list")
+                                                .executes(ctx -> {
+                                                    var source = ctx.getSource().getSender();
+                                                    var game = ctx.getArgument("game", Game.class);
+                                                    var manager = Jarona.getInstance().getQueueManager();
+                                                    var minimessage = MiniMessage.miniMessage();
+
+                                                    source.sendMessage(ServerUtil.formatComponent(
+                                                            "<green>Here are the queued players for " + game.getKey() + "!</green>"
+                                                    ));
+                                                    for (Player player : manager.getPlayersQueued(game)) {
+                                                        source.sendMessage(minimessage.deserialize(
+                                                                "- <yellow>" + player.getName() + "</yellow>"
+                                                        ));
+                                                    }
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                )
                 );
     }
 
