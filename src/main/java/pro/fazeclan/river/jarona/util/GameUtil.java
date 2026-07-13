@@ -50,7 +50,6 @@ public class GameUtil {
         if (game == null) {
             return;
         }
-        var uuid = UUID.randomUUID();
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
         queueManager.getAndRemovePlayersQueued(game).forEach(player -> {
             player.teleport(new Location(world, 0, 10, 0));
@@ -59,26 +58,28 @@ public class GameUtil {
         game.init(world, world.getPlayers());
         var task = Bukkit.getScheduler().runTaskTimer(Jarona.getInstance(), () -> game.tick(world, world.getPlayers()), 1, 1);
         world.getPersistentDataContainer().set(Jarona.getKey("loop_id"), PersistentDataType.INTEGER, task.getTaskId());
-        gameManager.addActiveGame(uuid, key);
     }
 
     public static void endGame(World world) {
-        var manager = Jarona.getInstance().getGameManager();
+        var plugin = Jarona.getInstance();
+        var manager = plugin.getGameManager();
+        var logger = plugin.getLogger();
+        logger.info("attempting to stop game");
         if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
+            logger.info("failed; not marked as game in pdc");
             return;
         }
-        var worldName = UUID.fromString(world.getKey().getKey());
-        if (!manager.getActiveGames().containsKey(worldName)) {
-            return;
-        }
-        var game = manager.getActiveGames().get(worldName);
+        var gameId = NamespacedKey.fromString(world.getPersistentDataContainer().get(Jarona.getKey("game"), PersistentDataType.STRING));
+        var game = manager.getRegistry().get(gameId);
         game.end(world, world.getPlayers());
         cleanUpGame(world);
     }
 
     public static void cleanUpGame(World world) {
+        var logger = Jarona.getInstance().getLogger();
         var mainWorld = WorldUtil.getMainWorld();
         if (mainWorld == null) {
+            logger.info("failed; no main world exists");
             return;
         }
         var highestZeroCoordinate = mainWorld.getHighestBlockYAt(0, 0);
@@ -87,12 +88,10 @@ public class GameUtil {
             resetPlayer(player, GameMode.ADVENTURE);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
-        if (taskId == null) {
-            WorldUtil.removeWorld(world.getName());
-            return;
-        }
-        Bukkit.getScheduler().cancelTask(taskId);
         WorldUtil.removeWorld(world.getName());
+        if (taskId != null) {
+            Bukkit.getScheduler().cancelTask(taskId);
+        }
     }
 
     public static void resetPlayer(Player player, GameMode gameMode) {
