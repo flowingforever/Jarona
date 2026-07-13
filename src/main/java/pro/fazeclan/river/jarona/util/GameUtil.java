@@ -64,9 +64,7 @@ public class GameUtil {
         var plugin = Jarona.getInstance();
         var manager = plugin.getGameManager();
         var logger = plugin.getLogger();
-        logger.info("attempting to stop game");
         if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
-            logger.info("failed; not marked as game in pdc");
             return;
         }
         var gameId = NamespacedKey.fromString(world.getPersistentDataContainer().get(Jarona.getKey("game"), PersistentDataType.STRING));
@@ -79,7 +77,6 @@ public class GameUtil {
         var logger = Jarona.getInstance().getLogger();
         var mainWorld = WorldUtil.getMainWorld();
         if (mainWorld == null) {
-            logger.info("failed; no main world exists");
             return;
         }
         var highestZeroCoordinate = mainWorld.getHighestBlockYAt(0, 0);
