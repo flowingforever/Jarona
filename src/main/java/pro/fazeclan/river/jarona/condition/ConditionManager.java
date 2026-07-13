@@ -91,7 +91,7 @@ public class ConditionManager {
                                 if (!actionbar.isEmpty()) {
                                     actionbar.append(" <gray>||</gray> ");
                                 }
-                                actionbar.append(condition.getHud());
+                                actionbar.append(condition.getHud().apply(condition));
                             }
                         }
                     }
@@ -104,7 +104,7 @@ public class ConditionManager {
                             if (!actionbar.isEmpty()) {
                                 actionbar.append(" <gray>||</gray> ");
                             }
-                            actionbar.append(condition.getHud());
+                            actionbar.append(condition.getHud().apply(condition));
                         }
                     }
                 }
