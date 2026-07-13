@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class GameMapManager {
 
     @Getter
-    protected HashMap<String, GameMap> registry = new HashMap<>();
+    private final HashMap<String, GameMap> registry = new HashMap<>();
 
     public void reloadRegistry() {
         registry.clear();

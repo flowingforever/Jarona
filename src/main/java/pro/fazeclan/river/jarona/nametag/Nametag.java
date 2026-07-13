@@ -19,10 +19,11 @@ public class Nametag {
 
     @Getter
     private final Player player;
+    @Getter
     private final ClientTextDisplay display;
     private final Set<UUID> viewers;
 
-    private Component cachedText;
+    private final Map<UUID, Component> cachedText;
 
     public Nametag(Player player) {
         this.player = player;
@@ -36,7 +37,7 @@ public class Nametag {
         this.display.setSeeThrough(false);
         this.display.setBillboard(DisplayBillboard.VERTICAL);
 
-        this.cachedText = getText();
+        this.cachedText = new HashMap<>();
     }
 
     public void hideForAll() {
@@ -46,7 +47,6 @@ public class Nametag {
     }
 
     public void updateVisibilityForAll() {
-        this.cachedText = getText();
         this.display.setLocation(player.getLocation().setRotation(0, 0));
 
         viewers.removeIf(uuid -> {
@@ -55,6 +55,7 @@ public class Nametag {
         });
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
+            this.cachedText.put(viewer.getUniqueId(), getText(viewer));
             boolean shouldSee = shouldSee(viewer);
             boolean isVisible = this.viewers.contains(viewer.getUniqueId());
 
@@ -96,7 +97,7 @@ public class Nametag {
 
     public void update(Player viewer) {
         this.display.setLocation(player.getLocation());
-        this.display.setText(this.cachedText);
+        this.display.setText(this.cachedText.get(viewer.getUniqueId()));
         this.display.mount(this.player, viewer);
         this.display.update(viewer);
     }
@@ -108,7 +109,7 @@ public class Nametag {
         }
     }
 
-    public Component getText() {
+    public Component getText(Player viewer) {
         return ServerUtil.formatComponent("<gray>" + player.getName() + "</gray>");
     }
 

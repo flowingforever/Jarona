@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 public class NametagManager {
 
@@ -27,6 +28,12 @@ public class NametagManager {
 
     public void create(Player player) {
         var nametag = new Nametag(player);
+        nametag.updateVisibilityForAll();
+        this.nametags.put(player.getUniqueId(), nametag);
+    }
+
+    public void createOverride(Player player, BiFunction<Player, Player, String> override) {
+        var nametag = new OverridenNametag(player, override);
         nametag.updateVisibilityForAll();
         this.nametags.put(player.getUniqueId(), nametag);
     }

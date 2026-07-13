@@ -50,7 +50,7 @@ public class TablistManager {
         if (nametag == null) {
             return;
         }
-        NametagUtil.modifyTabName(target, viewer, nametag.getText());
+        NametagUtil.modifyTabName(target, viewer, nametag.getText(viewer));
     }
 
     private void setTabHeaderFooter(Player viewer) {
