@@ -74,15 +74,25 @@ public class WorldUtil {
                 .createWorld();
     }
 
-    public static void removeWorld(String name) {
-        var world = new File(Bukkit.getWorldContainer().getAbsolutePath() + "/" + name);
+    public static void removeWorld(World world) {
+        var key = world.getKey();
+        removeWorld(key);
+    }
+
+    public static void removeWorld(NamespacedKey key) {
+        var namespace = new File(Bukkit.getServer().getLevelDirectory() + "/dimensions/" + key.namespace());
+        var world = new File(namespace, key.value());
         try {
             do {
-                Bukkit.unloadWorld(name, false);
+                Bukkit.unloadWorld(key.value(), false);
                 FileUtils.deleteDirectory(world);
             } while (world.exists());
+
+            if (namespace.listFiles().length == 0) {
+                FileUtils.deleteDirectory(namespace);
+            }
         } catch (IOException e) {
-            JavaPlugin.getPlugin(Jarona.class).getLogger().warning("Failed to remove world \"" + name + "\".");
+            JavaPlugin.getPlugin(Jarona.class).getLogger().warning("Failed to remove world \"" + key + "\".");
         }
     }
 

@@ -84,7 +84,7 @@ public class GameUtil {
             resetPlayer(player, GameMode.ADVENTURE);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
-        WorldUtil.removeWorld(world.getName());
+        WorldUtil.removeWorld(world);
         if (taskId != null) {
             Bukkit.getScheduler().cancelTask(taskId);
         }
