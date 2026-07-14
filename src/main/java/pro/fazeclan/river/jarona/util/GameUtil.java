@@ -74,7 +74,6 @@ public class GameUtil {
     }
 
     public static void cleanUpGame(World world) {
-        var logger = Jarona.getInstance().getLogger();
         var mainWorld = WorldUtil.getMainWorld();
         if (mainWorld == null) {
             return;
