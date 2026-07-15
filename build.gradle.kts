@@ -9,11 +9,14 @@ plugins {
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
+    maven { url = uri("https://maven.pvphub.me/tofaa") }
 }
 
 dependencies {
     paperweight.paperDevBundle("26.2.build.+")
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
+    compileOnly("io.github.alexdev03:unlimitednametags-api-paper:2.0.0")
+    compileOnly("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
 }
 
 java {

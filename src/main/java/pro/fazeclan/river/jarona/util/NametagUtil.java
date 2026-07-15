@@ -7,12 +7,18 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerInfoUpdate;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class NametagUtil {
 
     public static void hidePlayerNametag(Player target, Player viewer) {
+        hidePlayerNametagWithGlow(target, viewer, NamedTextColor.WHITE);
+    }
+
+    public static void hidePlayerNametagWithGlow(Player target, Player viewer, NamedTextColor color) {
         var name = getTeamName(target);
         var teamInfo = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
                 Component.empty(),
@@ -20,7 +26,7 @@ public class NametagUtil {
                 Component.empty(),
                 WrapperPlayServerTeams.NameTagVisibility.NEVER,
                 WrapperPlayServerTeams.CollisionRule.ALWAYS,
-                null,
+                color,
                 WrapperPlayServerTeams.OptionData.NONE
         );
         sendPacket(new WrapperPlayServerTeams(
@@ -31,6 +37,12 @@ public class NametagUtil {
         ), viewer);
     }
 
+    public static void hidePlayerNametagWithGlowToAll(Player target, NamedTextColor color) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            hidePlayerNametagWithGlow(target, player, color);
+        }
+    }
+
     public static void showPlayerNametag(Player target, Player viewer) {
         String name = getTeamName(target);
         sendPacket(new WrapperPlayServerTeams(
@@ -39,6 +51,12 @@ public class NametagUtil {
                 (WrapperPlayServerTeams.ScoreBoardTeamInfo) null,
                 target.getName()
         ), viewer);
+    }
+
+    public static void showPlayerNametagToAll(Player target) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            showPlayerNametag(target, player);
+        }
     }
 
     public static void modifyTabName(Player target, Player viewer, String component) {

@@ -14,3 +14,4 @@ And this plugin is not meant to be used on survival servers. **Your items/potion
 ### Running on Minecraft 26.2
 ### Running on [PaperMC](https://papermc.io) (No plans to support Spigot)
 ### Requires [PacketEvents](https://modrinth.com/plugin/packetevents)
+### Requires [UnlimitedNameTags](https://github.com/alexdev03/UnlimitedNametags)

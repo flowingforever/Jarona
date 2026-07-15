@@ -15,3 +15,6 @@ dependencies:
     packetevents:
       load: AFTER
       required: true
+    UnlimitedNameTags:
+      load: BEFORE
+      required: true
