@@ -5,7 +5,7 @@ I've been wanting to make more minigames recently, but frankly I don't want to k
 
 ~~Feel free to look around, there's not much currently other than a Condition system and barebones Game stuff. I'll be adding more when I need it and I'm active.~~
 
-Okay, way more now. A queue system, a condition system (meant more for cooldowns and general displays on the actionbar), game registry, map registry, nametags using display entities alongside tablist stuff, it's in a better position now to use.
+Okay, way more now. A queue system, a condition system (meant more for cooldowns and general displays on the actionbar), game registry, map registry, tablist stuff, it's in a better position now to use.
 
 Though, I would not recommend using this API with any other minigame plugins (other than the ones that depend on it, of course) because it may or may not override some aspects of those other plugins.
 
