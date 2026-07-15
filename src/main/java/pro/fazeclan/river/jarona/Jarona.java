@@ -14,8 +14,6 @@ import pro.fazeclan.river.jarona.command.StopCommand;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.map.GameMapManager;
-import pro.fazeclan.river.jarona.nametag.NametagManager;
-import pro.fazeclan.river.jarona.nametag.NametagScheduler;
 import pro.fazeclan.river.jarona.queue.QueueManager;
 import pro.fazeclan.river.jarona.tablist.TablistManager;
 
@@ -31,12 +29,6 @@ public final class Jarona extends JavaPlugin {
     GameMapManager mapManager;
 
     @Getter
-    NametagManager nametagManager;
-
-    @Getter
-    NametagScheduler nametagScheduler;
-
-    @Getter
     TablistManager tablistManager;
 
     @Getter
@@ -50,8 +42,6 @@ public final class Jarona extends JavaPlugin {
         this.gameManager = new GameManager();
         this.conditionManager = new ConditionManager();
         this.mapManager = new GameMapManager();
-        this.nametagManager = new NametagManager();
-        this.nametagScheduler = new NametagScheduler();
         this.tablistManager = new TablistManager();
         this.queueManager = new QueueManager();
     }
@@ -63,7 +53,6 @@ public final class Jarona extends JavaPlugin {
         // Plugin startup logic
         this.conditionManager.initTasks();
         this.mapManager.reloadRegistry();
-        this.nametagScheduler.start();
         this.tablistManager.startTask();
 
         var command = Commands.literal("jarona")
