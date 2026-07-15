@@ -101,7 +101,7 @@ public abstract class Condition implements Comparable<Condition> {
     /**
      * Resets the condition to defaults.
      */
-    abstract void reset();
+    public abstract void reset();
 
     @Override
     public int compareTo(@NotNull Condition o) {

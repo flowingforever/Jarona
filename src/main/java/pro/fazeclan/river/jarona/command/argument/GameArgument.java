@@ -9,6 +9,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.MessageComponentSerializer;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
@@ -19,14 +20,10 @@ import pro.fazeclan.river.jarona.game.Game;
 import java.util.concurrent.CompletableFuture;
 
 @NullMarked
-public class GameArgument implements CustomArgumentType<Game, String> {
+public class GameArgument implements CustomArgumentType<Game, NamespacedKey> {
 
     private static final SimpleCommandExceptionType ERROR_REGISTRY_EMPTY = new SimpleCommandExceptionType(
             MessageComponentSerializer.message().serialize(Component.text("The game type registry is empty!"))
-    );
-
-    private static final SimpleCommandExceptionType ERROR_INVALID_KEY = new SimpleCommandExceptionType(
-            MessageComponentSerializer.message().serialize(Component.text("This game type key is not structured correctly!"))
     );
 
     private static final SimpleCommandExceptionType ERROR_REGISTRY_NO_KEY = new SimpleCommandExceptionType(
@@ -47,10 +44,7 @@ public class GameArgument implements CustomArgumentType<Game, String> {
             throw ERROR_REGISTRY_EMPTY.create();
         }
 
-        final NamespacedKey key = NamespacedKey.fromString(getNativeType().parse(reader));
-        if (key == null) {
-            throw ERROR_INVALID_KEY.create();
-        }
+        final NamespacedKey key = getNativeType().parse(reader);
 
         if (!registry.containsKey(key)) {
             throw ERROR_REGISTRY_NO_KEY.create();
@@ -60,8 +54,8 @@ public class GameArgument implements CustomArgumentType<Game, String> {
     }
 
     @Override
-    public ArgumentType<String> getNativeType() {
-        return StringArgumentType.string();
+    public ArgumentType<NamespacedKey> getNativeType() {
+        return ArgumentTypes.namespacedKey();
     }
 
     @Override

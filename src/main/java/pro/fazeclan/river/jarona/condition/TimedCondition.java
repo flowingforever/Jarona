@@ -76,7 +76,7 @@ public class TimedCondition extends Condition {
     @Override
     public boolean getAvailable() {
         if (endTime == -1 || type == null) {
-            return false;
+            return true;
         }
         switch (type) {
             case PLAYER_TICK -> {
@@ -93,7 +93,7 @@ public class TimedCondition extends Condition {
     }
 
     @Override
-    void reset() {
+    public void reset() {
         this.endTime = -1;
     }
 
