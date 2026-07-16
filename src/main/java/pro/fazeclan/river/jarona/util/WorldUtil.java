@@ -82,17 +82,12 @@ public class WorldUtil {
     public static void removeWorld(NamespacedKey key) {
         var namespace = new File(Bukkit.getServer().getLevelDirectory() + "/dimensions/" + key.namespace());
         var world = new File(namespace, key.value());
-        try {
-            do {
-                Bukkit.unloadWorld(key.value(), false);
-                FileUtils.deleteDirectory(world);
-            } while (world.exists());
+        do {
+            Bukkit.unloadWorld(key.value(), false);
+        } while (!FileUtils.deleteQuietly(world));
 
-            if (namespace.listFiles().length == 0) {
-                FileUtils.deleteDirectory(namespace);
-            }
-        } catch (IOException e) {
-            JavaPlugin.getPlugin(Jarona.class).getLogger().warning("Failed to remove world \"" + key + "\".");
+        if (namespace.listFiles().length == 0) {
+            FileUtils.deleteQuietly(namespace);
         }
     }
 

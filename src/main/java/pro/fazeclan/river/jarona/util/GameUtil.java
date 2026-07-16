@@ -63,7 +63,6 @@ public class GameUtil {
     public static void endGame(World world) {
         var plugin = Jarona.getInstance();
         var manager = plugin.getGameManager();
-        var logger = plugin.getLogger();
         if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
             return;
         }
