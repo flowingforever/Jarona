@@ -4,12 +4,16 @@ plugins {
     id("com.gradleup.shadow") version "9.4.3"
     id("xyz.jpenilla.run-paper") version "3.0.2"
     id("io.freefair.lombok") version "9.5.0"
+    `maven-publish`
 }
+
+group = "com.github.flowingforever"
 
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
     maven { url = uri("https://maven.pvphub.me/tofaa") }
+    maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
