@@ -64,6 +64,8 @@ public final class Jarona extends JavaPlugin {
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(command);
         });
+
+        saveDefaultConfig();
     }
 
     @Override

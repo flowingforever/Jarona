@@ -10,16 +10,46 @@ import java.util.List;
 public abstract class Game {
 
     @Getter
-    protected final NamespacedKey key;
+    private final String name;
     @Getter
-    protected final boolean voidWorld;
+    private final NamespacedKey key;
     @Getter
-    protected final boolean requiresMap;
+    private final boolean voidWorld;
+    @Getter
+    private final boolean requiresMap;
+    @Getter
+    private final int minimumPlayers;
 
-    public Game(NamespacedKey key, boolean voidWorld, boolean requiresMap) {
+    public Game(String name, NamespacedKey key, boolean voidWorld) {
+        this.name = name;
+        this.key = key;
+        this.voidWorld = voidWorld;
+        this.requiresMap = false;
+        this.minimumPlayers = 1;
+    }
+
+    public Game(String name, NamespacedKey key, boolean voidWorld, int minimumPlayers) {
+        this.name = name;
+        this.key = key;
+        this.voidWorld = voidWorld;
+        this.requiresMap = false;
+        this.minimumPlayers = minimumPlayers;
+    }
+
+    public Game(String name, NamespacedKey key, boolean voidWorld, boolean requiresMap) {
+        this.name = name;
         this.key = key;
         this.voidWorld = voidWorld;
         this.requiresMap = requiresMap;
+        this.minimumPlayers = 1;
+    }
+
+    public Game(String name, NamespacedKey key, boolean voidWorld, boolean requiresMap, int minimumPlayers) {
+        this.name = name;
+        this.key = key;
+        this.voidWorld = voidWorld;
+        this.requiresMap = requiresMap;
+        this.minimumPlayers = minimumPlayers;
     }
 
     public abstract void init(World world, List<Player> players);

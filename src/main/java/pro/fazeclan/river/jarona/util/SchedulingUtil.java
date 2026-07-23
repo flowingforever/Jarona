@@ -1,8 +1,12 @@
 package pro.fazeclan.river.jarona.util;
 
+import org.bukkit.scheduler.BukkitRunnable;
 import pro.fazeclan.river.jarona.Jarona;
 
 import java.io.Closeable;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class SchedulingUtil {
 
@@ -22,6 +26,11 @@ public class SchedulingUtil {
                 .getScheduler()
                 .runTaskTimer(plugin, task, delay, period);
         return handler::cancel;
+    }
+
+    public static void interval(long delay, long period, Supplier<Boolean> task) {
+        var plugin = Jarona.getInstance();
+        new ConditionalRunnable(cr -> task.get()).runTaskTimer(plugin, delay, period);
     }
 
     public static Closeable asyncRun(Runnable task) {
@@ -49,6 +58,22 @@ public class SchedulingUtil {
                 .getScheduler()
                 .runTaskTimerAsynchronously(plugin, task, delay, period);
         return handler::cancel;
+    }
+
+    public static class ConditionalRunnable extends BukkitRunnable {
+
+        private Predicate<ConditionalRunnable> task;
+
+        private ConditionalRunnable(Predicate<ConditionalRunnable> task) {
+            this.task = task;
+        }
+
+        @Override
+        public void run() {
+            if (!task.test(this)) {
+                cancel();
+            }
+        }
     }
 
 }

@@ -7,8 +7,6 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.flowingforever"
-
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }

@@ -10,6 +10,7 @@ import pro.fazeclan.river.jarona.map.GameMap;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GameUtil {
 
@@ -21,6 +22,19 @@ public class GameUtil {
         } else {
             startGame(key, WorldUtil.createWorld(worldKey));
         }
+    }
+
+    public static void startGameWithRandomMap(NamespacedKey key) {
+        var mapCollection = Jarona.getInstance().getMapManager().getRegistry().values();
+        int index = ThreadLocalRandom.current().nextInt(mapCollection.size());
+        var map = mapCollection.stream()
+                .skip(index)
+                .findFirst()
+                .orElse(null);
+        if (map == null) {
+            return;
+        }
+        startGameWithMap(key, map);
     }
 
     public static void startGameWithMap(NamespacedKey key, GameMap map) {
@@ -98,6 +112,13 @@ public class GameUtil {
         player.setLevel(0);
         player.setExp(0);
         player.setGameMode(gameMode);
+    }
+
+    public static void savePlayer(Player player) {
+    }
+
+    public static void loadPlayer(Player player) {
+
     }
 
 }

@@ -33,14 +33,16 @@ public class QueueCommand {
                                     if (manager.isQueued(player, game)) {
                                         manager.unqueuePlayer(player);
                                         player.sendMessage(ServerUtil.formatComponent(
-                                                "<red>You have been unqueued for " + game.getKey() + "!</red>"
+                                                "<red>You have been unqueued for " + game.getName() + "!</red>"
                                         ));
                                     } else {
                                         manager.queuePlayer(player, game);
                                         player.sendMessage(ServerUtil.formatComponent(
-                                                "<green>You have been queued for " + game.getKey() + "!</green>"
+                                                "<green>You have been queued for " + game.getName() + "!</green>"
                                         ));
                                     }
+
+                                    manager.startGameQueueLoop(game);
 
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -58,18 +60,18 @@ public class QueueCommand {
                                                         if (manager.isQueued(player, game)) {
                                                             manager.unqueuePlayer(player);
                                                             player.sendMessage(ServerUtil.formatComponent(
-                                                                    "<red>You have been unqueued for " + game.getKey() + "!</red>"
+                                                                    "<red>You have been unqueued for " + game.getName() + "!</red>"
                                                             ));
                                                             source.sendMessage(ServerUtil.formatComponent(
-                                                                    "<red>" + player.getName() + " has been unqueued for " + game.getKey() + "!</red>"
+                                                                    "<red>" + player.getName() + " has been unqueued for " + game.getName() + "!</red>"
                                                             ));
                                                         } else {
                                                             manager.queuePlayer(player, game);
                                                             player.sendMessage(ServerUtil.formatComponent(
-                                                                    "<green>You have been queued for " + game.getKey() + "!</green>"
+                                                                    "<green>You have been queued for " + game.getName() + "!</green>"
                                                             ));
                                                             source.sendMessage(ServerUtil.formatComponent(
-                                                                    "<green>" + player.getName() + " has been queued for " + game.getKey() + "!</green>"
+                                                                    "<green>" + player.getName() + " has been queued for " + game.getName() + "!</green>"
                                                             ));
                                                         }
                                                     }
@@ -86,7 +88,7 @@ public class QueueCommand {
                                                     var minimessage = MiniMessage.miniMessage();
 
                                                     source.sendMessage(ServerUtil.formatComponent(
-                                                            "<green>Here are the queued players for " + game.getKey() + "!</green>"
+                                                            "<green>Here are the queued players for " + game.getName() + "!</green>"
                                                     ));
                                                     for (Player player : manager.getPlayersQueued(game)) {
                                                         source.sendMessage(minimessage.deserialize(

@@ -12,7 +12,7 @@ public class GameManager {
     protected Map<NamespacedKey, Game> registry = new HashMap<>();
 
     public <G extends Game> G register(G game) {
-        this.registry.put(game.key, game);
+        this.registry.put(game.getKey(), game);
         return game;
     }
 
