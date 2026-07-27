@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import pro.fazeclan.river.jarona.Jarona;
-import pro.fazeclan.river.jarona.game.Game;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class ConditionManager {
     }
 
     @SuppressWarnings("unchecked")
-    public class Conditions implements Iterable<Condition> {
+    public static class Conditions implements Iterable<Condition> {
         private final ConcurrentHashMap<String, Condition> nameConditionMap = new ConcurrentHashMap<>();
 
         public <T extends Condition> T getOrCreate(String key, T condition) {
@@ -63,6 +62,10 @@ public class ConditionManager {
 
         public void remove(String key) {
             this.nameConditionMap.remove(key);
+        }
+
+        public void clear() {
+            this.nameConditionMap.clear();
         }
 
         public Map<String, Condition> getConditionMap() {

@@ -7,10 +7,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
-import pro.fazeclan.river.jarona.command.MapCommand;
-import pro.fazeclan.river.jarona.command.QueueCommand;
-import pro.fazeclan.river.jarona.command.StartCommand;
-import pro.fazeclan.river.jarona.command.StopCommand;
+import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.map.GameMapManager;
@@ -60,6 +57,7 @@ public final class Jarona extends JavaPlugin {
                 .then(MapCommand.command())
                 .then(QueueCommand.command())
                 .then(StopCommand.command())
+                .then(ConditionCommand.command())
                 .build();
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(command);
