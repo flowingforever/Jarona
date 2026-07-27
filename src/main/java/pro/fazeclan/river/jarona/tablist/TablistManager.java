@@ -45,10 +45,6 @@ public class TablistManager {
     }
 
     private void setTabEntry(UntNametagManagerPaper manager, Player viewer, Player target) {
-        if (!viewer.getWorld().equals(target.getWorld())) {
-            NametagUtil.modifyTabName(target, viewer, Component.text(target.getName()).color(NamedTextColor.GRAY).decorate(TextDecoration.ITALIC));
-            return;
-        }
         if (!manager.hasNametagOverride(target)) {
             return;
         }
