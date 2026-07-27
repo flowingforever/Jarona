@@ -6,6 +6,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 
 import java.io.IOException;
@@ -75,13 +76,10 @@ public class GameUtil {
     }
 
     public static void endGame(World world) {
-        var plugin = Jarona.getInstance();
-        var manager = plugin.getGameManager();
-        if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
+        var game = getGame(world);
+        if (game == null) {
             return;
         }
-        var gameId = NamespacedKey.fromString(world.getPersistentDataContainer().get(Jarona.getKey("game"), PersistentDataType.STRING));
-        var game = manager.getRegistry().get(gameId);
         game.end(world, world.getPlayers());
         cleanUpGame(world);
     }
@@ -112,6 +110,20 @@ public class GameUtil {
         player.setLevel(0);
         player.setExp(0);
         player.setGameMode(gameMode);
+    }
+
+    public static Game getGame(Player player) {
+        return getGame(player.getWorld());
+    }
+
+    public static Game getGame(World world) {
+        var plugin = Jarona.getInstance();
+        var manager = plugin.getGameManager();
+        if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) {
+            return null;
+        }
+        var gameId = NamespacedKey.fromString(world.getPersistentDataContainer().get(Jarona.getKey("game"), PersistentDataType.STRING));
+        return manager.getRegistry().get(gameId);
     }
 
     public static void savePlayer(Player player) {
