@@ -19,6 +19,7 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     compileOnly("io.github.alexdev03:unlimitednametags-api-paper:2.0.0")
     compileOnly("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
+    implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }
 
 java {
@@ -26,6 +27,10 @@ java {
 }
 
 tasks {
+    shadowJar {
+        relocate("com.jeff_media.morepersistentdatatypes", "pro.fazeclan.river.jarona.morepersistentdatatypes")
+    }
+
     build {
         dependsOn(shadowJar)
     }

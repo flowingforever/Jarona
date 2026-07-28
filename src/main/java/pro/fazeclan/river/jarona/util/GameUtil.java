@@ -48,7 +48,7 @@ public class GameUtil {
                 .toFile();
         worldFolder.mkdirs();
         try {
-            FileUtils.copyDirectory(map.getWorld(), worldFolder);
+            FileUtils.copyDirectory(map.world(), worldFolder);
         } catch (IOException e) {
             Jarona.getInstance().getLogger().warning("The world may not have been entirely created.");
         }
@@ -127,8 +127,18 @@ public class GameUtil {
     }
 
     public static boolean hasGame(World world) {
-        var plugin = Jarona.getInstance();
         return world.getPersistentDataContainer().has(Jarona.getKey("game"));
+    }
+
+    public static boolean hasGame(World world, NamespacedKey key) {
+        if (!world.getPersistentDataContainer().has(Jarona.getKey("game"))) return false;
+        var gameId = NamespacedKey.fromString(world.getPersistentDataContainer().get(Jarona.getKey("game"), PersistentDataType.STRING));
+        if (gameId == null) return false;
+        return gameId.equals(key);
+    }
+
+    public static boolean hasGame(World world, Game game) {
+        return hasGame(world, game.getKey());
     }
 
     public static void savePlayer(Player player) {

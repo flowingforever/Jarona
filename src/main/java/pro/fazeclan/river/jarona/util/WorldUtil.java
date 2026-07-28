@@ -2,11 +2,8 @@ package pro.fazeclan.river.jarona.util;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
-import org.bukkit.plugin.java.JavaPlugin;
-import pro.fazeclan.river.jarona.Jarona;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class WorldUtil {
@@ -76,14 +73,22 @@ public class WorldUtil {
 
     public static void removeWorld(World world) {
         var key = world.getKey();
-        removeWorld(key);
+        var dimNamespace = new File(Bukkit.getServer().getLevelDirectory() + "/dimensions/" + key.namespace());
+        var dimValue = new File(dimNamespace, key.value());
+        do {
+            if (!Bukkit.isTickingWorlds()) Bukkit.unloadWorld(world, false);
+        } while (!FileUtils.deleteQuietly(dimValue));
+
+        if (dimNamespace.listFiles().length == 0) {
+            FileUtils.deleteQuietly(dimNamespace);
+        }
     }
 
     public static void removeWorld(NamespacedKey key) {
         var namespace = new File(Bukkit.getServer().getLevelDirectory() + "/dimensions/" + key.namespace());
         var world = new File(namespace, key.value());
         do {
-            Bukkit.unloadWorld(key.value(), false);
+            if (!Bukkit.isTickingWorlds()) Bukkit.unloadWorld(key.value(), false);
         } while (!FileUtils.deleteQuietly(world));
 
         if (namespace.listFiles().length == 0) {

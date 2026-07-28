@@ -11,7 +11,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import net.kyori.adventure.text.Component;
-import org.bukkit.NamespacedKey;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.map.GameMap;
 

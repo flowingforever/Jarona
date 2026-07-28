@@ -86,6 +86,14 @@ public class WorldlessLocation {
         );
     }
 
+    public void serialize(String name, YamlConfiguration config) {
+        config.set(name + ".x", getX());
+        config.set(name + ".y", getY());
+        config.set(name + ".z", getZ());
+        config.set(name + ".yaw", getYaw());
+        config.set(name + ".pitch", getPitch());
+    }
+
     public static WorldlessLocation deserialize(String name, PersistentDataContainer pdc) {
         var container = pdc.get(Jarona.getKey(name), PersistentDataType.TAG_CONTAINER);
         var location = new WorldlessLocation();
@@ -109,6 +117,16 @@ public class WorldlessLocation {
                 config.getDouble(name + ".z", 0.0),
                 (float) config.getDouble(name + ".yaw", 0.0),
                 (float) config.getDouble(name + ".pitch", 0.0)
+        );
+    }
+
+    public static WorldlessLocation fromLocation(Location location) {
+        return new WorldlessLocation(
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getYaw(),
+                location.getPitch()
         );
     }
 
