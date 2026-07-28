@@ -83,6 +83,20 @@ public class MapCommand {
                                                 )
                                 )
                                 .then(
+                                        Commands.literal("setspawn")
+                                                .executes(ctx -> {
+                                                    if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                                    var session = new GameMapEditorSession(player.getWorld());
+                                                    session.setSpawn(player.getLocation());
+                                                    player.sendMessage(ServerUtil.formatComponent(
+                                                            "<green>Set map spawn to your current position!</green>"
+                                                    ));
+
+                                                    return Command.SINGLE_SUCCESS;
+                                                })
+                                )
+                                .then(
                                         Commands.literal("removeconfigentry")
                                                 .executes(ctx -> {
                                                     if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
