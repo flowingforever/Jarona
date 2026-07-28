@@ -6,10 +6,16 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.command.argument.GameMapArgument;
+import pro.fazeclan.river.jarona.map.GameMap;
 import pro.fazeclan.river.jarona.map.GameMapEditorSession;
 import pro.fazeclan.river.jarona.util.ServerUtil;
+import pro.fazeclan.river.jarona.util.WorldUtil;
+
+import java.io.IOException;
 
 public class MapCommand {
 
@@ -31,6 +37,34 @@ public class MapCommand {
                 )
                 .then(
                         Commands.literal("editor")
+                                .then(
+                                        Commands.literal("loadmap")
+                                                .then(Commands.argument("map", new GameMapArgument())
+                                                        .executes(ctx -> {
+                                                            if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                                            var map = ctx.getArgument("map", GameMap.class);
+                                                            var worldFolder = Jarona.getInstance().getServer().getLevelDirectory()
+                                                                    .toAbsolutePath()
+                                                                    .resolve("dimensions/jarona/" + map.id())
+                                                                    .toFile();
+                                                            worldFolder.mkdirs();
+                                                            try {
+                                                                FileUtils.copyDirectory(map.world(), worldFolder);
+                                                            } catch (IOException e) {
+                                                                Jarona.getInstance().getLogger().warning("The world may not have been entirely created.");
+                                                            }
+
+                                                            var world = WorldUtil.createWorld(Jarona.getKey(map.id()));
+                                                            player.teleport(map.spawn().toLocation(world));
+                                                            player.sendMessage(ServerUtil.formatComponent(
+                                                                    "<green>Loaded map " + map.name() + "!</green>"
+                                                            ));
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        })
+                                                )
+                                )
                                 .then(
                                         Commands.literal("setname")
                                                 .then(Commands.argument("name", StringArgumentType.string())
