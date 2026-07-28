@@ -126,6 +126,11 @@ public class GameUtil {
         return manager.getRegistry().get(gameId);
     }
 
+    public static boolean hasGame(World world) {
+        var plugin = Jarona.getInstance();
+        return world.getPersistentDataContainer().has(Jarona.getKey("game"));
+    }
+
     public static void savePlayer(Player player) {
     }
 

@@ -16,5 +16,5 @@ dependencies:
       load: AFTER
       required: true
     UnlimitedNameTags:
-      load: BEFORE
+      load: AFTER
       required: true
