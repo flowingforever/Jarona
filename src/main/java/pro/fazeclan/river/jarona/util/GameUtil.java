@@ -89,7 +89,6 @@ public class GameUtil {
         if (mainWorld == null) {
             return;
         }
-        var highestZeroCoordinate = mainWorld.getHighestBlockYAt(0, 0);
         for (Player player : world.getPlayers()) {
             player.teleport(mainWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
