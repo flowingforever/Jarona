@@ -48,11 +48,13 @@ public class MapCommand {
                                                                     .toAbsolutePath()
                                                                     .resolve("dimensions/jarona/" + map.id())
                                                                     .toFile();
-                                                            worldFolder.mkdirs();
-                                                            try {
-                                                                FileUtils.copyDirectory(map.world(), worldFolder);
-                                                            } catch (IOException e) {
-                                                                Jarona.getInstance().getLogger().warning("The world may not have been entirely created.");
+                                                            if (!worldFolder.exists()) {
+                                                                worldFolder.mkdirs();
+                                                                try {
+                                                                    FileUtils.copyDirectory(map.world(), worldFolder);
+                                                                } catch (IOException e) {
+                                                                    Jarona.getInstance().getLogger().warning("The world may not have been entirely created.");
+                                                                }
                                                             }
 
                                                             var world = WorldUtil.createWorld(Jarona.getKey(map.id()));
