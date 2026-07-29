@@ -25,7 +25,7 @@ public class NametagUtil {
                 Component.empty(),
                 Component.empty(),
                 WrapperPlayServerTeams.NameTagVisibility.NEVER,
-                WrapperPlayServerTeams.CollisionRule.ALWAYS,
+                WrapperPlayServerTeams.CollisionRule.NEVER,
                 color,
                 WrapperPlayServerTeams.OptionData.NONE
         );
