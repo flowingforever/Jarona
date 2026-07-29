@@ -91,7 +91,7 @@ public class GameUtil {
         }
         var highestZeroCoordinate = mainWorld.getHighestBlockYAt(0, 0);
         for (Player player : world.getPlayers()) {
-            player.teleport(new Location(mainWorld, 0.5, highestZeroCoordinate + 1.0, 0.0));
+            player.teleport(mainWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
