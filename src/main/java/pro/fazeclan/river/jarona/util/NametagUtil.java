@@ -19,13 +19,17 @@ public class NametagUtil {
     }
 
     public static void hidePlayerNametagWithGlow(Player target, Player viewer, NamedTextColor color) {
+        hidePlayerNametagWithGlow(target, viewer, color, WrapperPlayServerTeams.CollisionRule.NEVER);
+    }
+
+    public static void hidePlayerNametagWithGlow(Player target, Player viewer, NamedTextColor color, WrapperPlayServerTeams.CollisionRule rule) {
         var name = getTeamName(target);
         var teamInfo = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
                 Component.empty(),
                 Component.empty(),
                 Component.empty(),
                 WrapperPlayServerTeams.NameTagVisibility.NEVER,
-                WrapperPlayServerTeams.CollisionRule.NEVER,
+                rule,
                 color,
                 WrapperPlayServerTeams.OptionData.NONE
         );

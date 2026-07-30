@@ -12,6 +12,7 @@ repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
     maven { url = uri("https://maven.pvphub.me/tofaa") }
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.extendedclip.com/releases/") }
 }
 
 dependencies {
@@ -19,6 +20,7 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     compileOnly("io.github.alexdev03:unlimitednametags-api-paper:2.0.0")
     compileOnly("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
 }
 

@@ -1,5 +1,6 @@
 package pro.fazeclan.river.jarona.tablist;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -45,11 +46,8 @@ public class TablistManager {
     }
 
     private void setTabEntry(UntNametagManagerPaper manager, Player viewer, Player target) {
-        if (!manager.hasNametagOverride(target)) {
-            return;
-        }
-        var nametag = manager.getNametagOverride(target).get().displayGroups().getFirst();
-        NametagUtil.modifyTabName(target, viewer, nametag.lines().getFirst().text());
+        var text = PlaceholderAPI.setPlaceholders(target, manager.getEffectiveNametag(target).displayGroups().getFirst().lines().getFirst().text());
+        NametagUtil.modifyTabName(target, viewer, text);
     }
 
     private void setTabHeaderFooter(Player viewer) {
