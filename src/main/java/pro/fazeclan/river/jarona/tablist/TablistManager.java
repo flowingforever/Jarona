@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.util.GameUtil;
 import pro.fazeclan.river.jarona.util.NametagUtil;
 import pro.fazeclan.river.jarona.util.SchedulingUtil;
 
@@ -25,6 +26,7 @@ public class TablistManager {
         this.task = SchedulingUtil.asyncInterval(10, 10, () -> {
             var manager = (UntNametagManagerPaper) UNTPaperAPI.getInstance().nametagManager();
             for (Player viewer : Bukkit.getOnlinePlayers()) {
+                if (!GameUtil.hasGame(viewer.getWorld())) return;
                 setTabHeaderFooter(viewer);
                 for (Player target : Bukkit.getOnlinePlayers()) {
                     setTabEntry(manager, viewer, target);

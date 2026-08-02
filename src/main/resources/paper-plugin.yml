@@ -17,6 +17,10 @@ dependencies:
     UnlimitedNameTags:
       load: BEFORE
       required: true
+    NBTAPI:
+      load: BEFORE
+      required: true
+      join-classpath: true
     PlaceholderAPI:
-      load: BEFORE #
+      load: BEFORE
       required: true

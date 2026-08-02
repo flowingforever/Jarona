@@ -12,6 +12,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class NametagUtil {
 
     public static void hidePlayerNametag(Player target, Player viewer) {
@@ -112,6 +114,22 @@ public class NametagUtil {
                         null
                 )
         ), viewer);
+    }
+
+    private static final String ALPHANUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    public static String generateUsername(int length) {
+        if (length < 1) {
+            return "";
+        }
+
+        var sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            var randIndex = ThreadLocalRandom.current().nextInt(ALPHANUMERIC.length());
+            sb.append(ALPHANUMERIC.charAt(randIndex));
+        }
+
+        return sb.toString();
     }
 
     private static String getTeamName(Player player) {

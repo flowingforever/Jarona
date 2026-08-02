@@ -44,6 +44,10 @@ tasks {
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("26.2")
         jvmArgs("-Xms2G", "-Xmx2G", "-Dcom.mojang.eula.agree=true")
+        downloadPlugins {
+            modrinth("packetevents", "2.13.0+spigot")
+            modrinth("nbtapi", "2.15.7")
+        }
     }
 
     processResources {

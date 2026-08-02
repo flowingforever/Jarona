@@ -73,7 +73,7 @@ public final class Jarona extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         PacketEvents.getAPI().terminate();
-        this.tablistManager.stopTask();
+        //this.tablistManager.stopTask();
     }
 
     public static Jarona getInstance() {
