@@ -1,5 +1,6 @@
 package pro.fazeclan.river.jarona.util;
 
+import de.tr7zw.nbtapi.NBT;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -68,6 +69,7 @@ public class GameUtil {
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
         queueManager.getAndRemovePlayersQueued(game).forEach(player -> {
             player.teleport(new Location(world, 0, 10, 0));
+            savePlayer(player);
             resetPlayer(player, GameMode.SPECTATOR);
         });
         game.init(world, world.getPlayers());
@@ -92,6 +94,7 @@ public class GameUtil {
         for (Player player : world.getPlayers()) {
             player.teleport(mainWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
+            loadPlayer(player);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
         WorldUtil.removeWorld(world);
@@ -141,10 +144,24 @@ public class GameUtil {
     }
 
     public static void savePlayer(Player player) {
+        var inventory = NBT.get(player, nbt -> "{Inventory:" + nbt.getCompoundList("Inventory") + ", equipment:" + nbt.getCompound("equipment") + "}");
+
+        var key = Jarona.getKey("saved_inventory");
+        if (!player.getPersistentDataContainer().has(key)) {
+            player.getPersistentDataContainer().set(key, PersistentDataType.STRING, inventory);
+        }
+        player.getInventory().clear();
     }
 
     public static void loadPlayer(Player player) {
+        var key = Jarona.getKey("saved_inventory");
+        var inventory = player.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "{}");
+        player.getPersistentDataContainer().remove(key);
 
+        NBT.modify(player, nbt -> {
+            nbt.mergeCompound(NBT.parseNBT(inventory));
+        });
+        player.updateInventory();
     }
 
 }

@@ -22,6 +22,7 @@ dependencies {
     compileOnly("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.12.3")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
 }
 
 java {

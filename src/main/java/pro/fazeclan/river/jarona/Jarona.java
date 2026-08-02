@@ -1,6 +1,7 @@
 package pro.fazeclan.river.jarona;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import de.tr7zw.nbtapi.NBT;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -46,6 +47,8 @@ public final class Jarona extends JavaPlugin {
     @Override
     public void onEnable() {
         PacketEvents.getAPI().init();
+
+        NBT.preloadApi();
 
         // Plugin startup logic
         this.conditionManager.initTasks();
