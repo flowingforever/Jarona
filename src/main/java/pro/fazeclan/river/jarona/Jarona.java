@@ -87,7 +87,7 @@ public final class Jarona extends JavaPlugin {
     }
 
     public static NamespacedKey getKey(String value) {
-        return new NamespacedKey(getInstance(), value);
+        return new NamespacedKey("jarona", value);
     }
 
 }

@@ -2,6 +2,7 @@ package pro.fazeclan.river.jarona.util;
 
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
+import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.condition.Condition;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
@@ -107,6 +108,14 @@ public class WorldUtil {
             return null;
         }
         return Bukkit.getWorld(levelName);
+    }
+
+    public static <P, C> void setWorldValue(World world, String name, PersistentDataType<P, C> type, C value) {
+        world.getPersistentDataContainer().set(Jarona.getKey(name), type, value);
+    }
+
+    public static <P, C> C getWorldValue(World world, String name, PersistentDataType<P, C> type, C def) {
+        return world.getPersistentDataContainer().getOrDefault(Jarona.getKey(name), type, def);
     }
 
 }
