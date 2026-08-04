@@ -28,6 +28,7 @@ And this plugin is not meant to be used on survival servers. **Your items/potion
 - [ ] Party System
 - [ ] Spectate Menu
 - [ ] Nicknames
+- [ ] Tablist Control
 
 ## Known Issues
 
