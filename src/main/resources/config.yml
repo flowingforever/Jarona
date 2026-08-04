@@ -1,1 +1,2 @@
-start-wait-period: 15 # seconds
+start-wait-period: 30 # seconds
+condition-update-period: 1 # ticks

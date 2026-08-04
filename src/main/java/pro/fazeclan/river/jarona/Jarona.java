@@ -65,6 +65,7 @@ public final class Jarona extends JavaPlugin {
                 .then(StopCommand.command())
                 .then(ConditionCommand.command())
                 .then(TestCommand.command())
+                .then(ConfigCommand.command())
                 .build();
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(command);

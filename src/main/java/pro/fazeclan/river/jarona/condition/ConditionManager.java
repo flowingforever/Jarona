@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.util.ConditionUtil;
@@ -21,6 +22,7 @@ public class ConditionManager {
     @Getter
     private final ConcurrentHashMap<UUID, Conditions> playerConditionMap = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Conditions> gameConditionMap = new ConcurrentHashMap<>();
+    private BukkitTask task;
 
     public Conditions getPlayerConditions(Player player) {
         return playerConditionMap.compute(player.getUniqueId(), (k, c) -> {
@@ -41,7 +43,26 @@ public class ConditionManager {
     }
 
     public void initTasks() {
-        new ConditionTask().runTaskTimerAsynchronously(Jarona.getInstance(), 5, 5);
+        var jarona = Jarona.getInstance();
+        task = new ConditionTask().runTaskTimerAsynchronously(
+                jarona,
+                5,
+                jarona.getConfig().getInt("condition-update-period", 5)
+        );
+    }
+
+    public void stopTask() {
+        task.cancel();
+    }
+
+    public void reloadTask() {
+        var jarona = Jarona.getInstance();
+        task.cancel();
+        task = new ConditionTask().runTaskTimerAsynchronously(
+                jarona,
+                5,
+                jarona.getConfig().getInt("condition-update-period", 5)
+        );
     }
 
     @SuppressWarnings("unchecked")
