@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.util.ConditionUtil;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -84,33 +85,8 @@ public class ConditionManager {
         public void run() {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 StringBuilder actionbar = new StringBuilder();
-
-                var worldName = player.getWorld().getKey().getKey();
-                try {
-                    var sortedGameConditions = getGameConditions(UUID.fromString(worldName)).getConditionMap().values().stream().sorted().toList();
-                    for (Condition condition : sortedGameConditions) {
-                        if (condition.getHudCondition().apply(condition)) {
-                            if (condition.getHud() != null) {
-                                if (!actionbar.isEmpty()) {
-                                    actionbar.append(" <gray>||</gray> ");
-                                }
-                                actionbar.append(condition.getHud().apply(condition));
-                            }
-                        }
-                    }
-                } catch (Exception ignored) {}
-
-                var sortedPlayerConditions = getPlayerConditions(player).getConditionMap().values().stream().sorted().toList();
-                for (Condition condition : sortedPlayerConditions) {
-                    if (condition.getHudCondition().apply(condition)) {
-                        if (condition.getHud() != null) {
-                            if (!actionbar.isEmpty()) {
-                                actionbar.append(" <gray>||</gray> ");
-                            }
-                            actionbar.append(condition.getHud().apply(condition));
-                        }
-                    }
-                }
+                actionbar.append(ConditionUtil.worldConditionsToFormattedString(player.getWorld()));
+                actionbar.append(ConditionUtil.conditionsToFormattedString(getPlayerConditions(player)));
 
                 if (actionbar.isEmpty()) {
                     continue;

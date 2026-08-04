@@ -12,6 +12,7 @@ import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.map.GameMapManager;
+import pro.fazeclan.river.jarona.placeholder.JaronaExpansion;
 import pro.fazeclan.river.jarona.queue.QueueManager;
 import pro.fazeclan.river.jarona.tablist.TablistManager;
 
@@ -46,26 +47,30 @@ public final class Jarona extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // dependencies
         PacketEvents.getAPI().init();
-
         NBT.preloadApi();
+        new JaronaExpansion().register();
 
-        // Plugin startup logic
+        // managers
         this.conditionManager.initTasks();
         this.mapManager.reloadRegistry();
         this.tablistManager.startTask();
 
+        // commands
         var command = Commands.literal("jarona")
                 .then(StartCommand.command())
                 .then(MapCommand.command())
                 .then(QueueCommand.command())
                 .then(StopCommand.command())
                 .then(ConditionCommand.command())
+                .then(TestCommand.command())
                 .build();
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(command);
         });
 
+        // config
         saveDefaultConfig();
     }
 
