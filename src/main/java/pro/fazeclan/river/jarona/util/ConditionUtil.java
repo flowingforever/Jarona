@@ -43,7 +43,7 @@ public class ConditionUtil {
             if (condition.getHudCondition().apply(condition)) {
                 if (condition.getHud() != null) {
                     if (!builder.isEmpty()) {
-                        builder.append(" <gray>||</gray> ");
+                        builder.append(" <gray>◇</gray> ");
                     }
                     builder.append(condition.getHud().apply(condition));
                 }

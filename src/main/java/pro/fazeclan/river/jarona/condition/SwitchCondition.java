@@ -31,6 +31,14 @@ public class SwitchCondition extends Condition {
         return on;
     }
 
+    public void setAvailable(boolean on) {
+        this.on = false;
+    }
+
+    public void toggle() {
+        this.on = !on;
+    }
+
     @Override
     public void reset() {
         on = initial;

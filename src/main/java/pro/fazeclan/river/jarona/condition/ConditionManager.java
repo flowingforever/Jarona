@@ -107,6 +107,11 @@ public class ConditionManager {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 StringBuilder actionbar = new StringBuilder();
                 actionbar.append(ConditionUtil.worldConditionsToFormattedString(player.getWorld()));
+
+                if (!actionbar.isEmpty()) {
+                    actionbar.append(" <gray>◇</gray> ");
+                }
+
                 actionbar.append(ConditionUtil.conditionsToFormattedString(getPlayerConditions(player)));
 
                 if (actionbar.isEmpty()) {
