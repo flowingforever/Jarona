@@ -108,11 +108,12 @@ public class ConditionManager {
                 StringBuilder actionbar = new StringBuilder();
                 actionbar.append(ConditionUtil.worldConditionsToFormattedString(player.getWorld()));
 
-                if (!actionbar.isEmpty()) {
+                var playerConditions = ConditionUtil.conditionsToFormattedString(getPlayerConditions(player));
+                if (!playerConditions.isEmpty()) {
                     actionbar.append(" <gray>◇</gray> ");
                 }
 
-                actionbar.append(ConditionUtil.conditionsToFormattedString(getPlayerConditions(player)));
+                actionbar.append(playerConditions);
 
                 if (actionbar.isEmpty()) {
                     continue;
