@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.util.NametagUtil;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class TablistCategory {
 
@@ -19,6 +20,7 @@ public class TablistCategory {
     private final Component displayComponent;
     @Getter
     private final UUID worldUID;
+    private final Predicate<Player> predicate;
 
     public TablistCategory(String fakeName, String component, List<TablistEntry> entries) {
         this.entries = entries;
@@ -27,6 +29,7 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
     }
 
     public TablistCategory(String fakeName, Component component, List<TablistEntry> entries) {
@@ -36,6 +39,7 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
     }
 
     public TablistCategory(String fakeName, String component, TablistEntry... entries) {
@@ -45,6 +49,7 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
     }
 
     public TablistCategory(String fakeName, Component component, TablistEntry... entries) {
@@ -54,6 +59,7 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
     }
 
     public TablistCategory(String fakeName, String component, Player... players) {
@@ -67,6 +73,7 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
     }
 
     public TablistCategory(String fakeName, Component component, Player... players) {
@@ -80,6 +87,27 @@ public class TablistCategory {
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
         this.worldUID = null;
+        this.predicate = null;
+    }
+
+    public TablistCategory(String fakeName, Component component, Predicate<Player> predicate) {
+        this.entries = List.of();
+        this.emptyEntries = new ArrayList<>();
+        this.displayComponent = component;
+        this.fakeName = fakeName;
+        this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
+        this.predicate = predicate;
+    }
+
+    public TablistCategory(String fakeName, String component, Predicate<Player> predicate) {
+        this.entries = List.of();
+        this.emptyEntries = new ArrayList<>();
+        this.displayComponent = MiniMessage.miniMessage().deserialize(component);
+        this.fakeName = fakeName;
+        this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
+        this.predicate = predicate;
     }
 
     public void organizeCategory(int listOrder) {
@@ -99,6 +127,21 @@ public class TablistCategory {
             entry.removeEntry(viewer);
         }
         emptyEntries.clear();
+
+        if (predicate != null && getWorld() != null) {
+            for (var entry : entries) {
+                entry.removeEntry(viewer);
+            }
+            entries.clear();
+
+            for (var player : getWorld().getPlayers()) {
+                if (predicate.test(player)) {
+                    entries.add(new TablistEntry(
+                            player
+                    ));
+                }
+            }
+        }
 
         // broadcast initial entries
         title.broadcastEntry(viewer);
@@ -127,6 +170,23 @@ public class TablistCategory {
             }
         }
         emptyEntries.clear();
+
+        if (predicate != null && getWorld() != null) {
+            for (var entry : entries) {
+                for (var viewer : players) {
+                    entry.removeEntry(viewer);
+                }
+            }
+            entries.clear();
+
+            for (var player : getWorld().getPlayers()) {
+                if (predicate.test(player)) {
+                    entries.add(new TablistEntry(
+                            player
+                    ));
+                }
+            }
+        }
 
         var entryOrder = listOrder;
 
