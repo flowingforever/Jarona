@@ -65,7 +65,7 @@ public class TestCommand {
                                                     new TablistEntry(NametagUtil.generateUsername(12), Component.text(NametagUtil.generateUsername(12)))
                                             )
                                     );
-                                    categories.broadcastCategories(viewer);
+                                    categories.broadcastCategories();
 
                                     return Command.SINGLE_SUCCESS;
                                 })

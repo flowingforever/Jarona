@@ -16,17 +16,31 @@ public class TablistCategories {
         this.categories = categories;
     }
 
-    public void broadcastCategories(Player viewer) {
+    public TablistCategories addViewer(Player player) {
+        for (var category : categories) {
+            category.addViewer(player);
+        }
+        return this;
+    }
+
+    public TablistCategories removeViewer(Player player) {
+        for (var category : categories) {
+            category.removeViewer(player);
+        }
+        return this;
+    }
+
+    public void broadcastCategories() {
         var i = 5000;
         for (var category : categories) {
-            category.broadcastCategory(viewer, i);
+            category.broadcastCategory(i);
             i -= 20;
         }
     }
 
-    public void removeCategories(Player viewer) {
+    public void removeCategories() {
         for (var category : categories) {
-            category.removeCategory(viewer);
+            category.removeCategory();
         }
     }
 

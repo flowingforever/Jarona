@@ -1,5 +1,6 @@
 package pro.fazeclan.river.jarona.tablist;
 
+import com.jeff_media.morepersistentdatatypes.DataType;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

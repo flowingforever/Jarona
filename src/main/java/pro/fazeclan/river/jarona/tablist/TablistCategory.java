@@ -2,11 +2,11 @@ package pro.fazeclan.river.jarona.tablist;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.util.NametagUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class TablistCategory {
 
@@ -15,6 +15,7 @@ public class TablistCategory {
     private final List<TablistEntry> emptyEntries;
     private final String fakeName;
     private final Component displayComponent;
+    private final Set<UUID> viewers = new HashSet<>();
 
     public TablistCategory(String fakeName, String component, List<TablistEntry> entries) {
         this.entries = entries;
@@ -107,10 +108,14 @@ public class TablistCategory {
         }
     }
 
-    public void broadcastCategory(Player viewer, int listOrder) {
+    public void broadcastCategory(int listOrder) {
+        var players = getViewers();
+
         // remove any empty entries (if there is any)
         for (var entry : emptyEntries) {
-            entry.removeEntry(viewer);
+            for (var viewer : players) {
+                entry.removeEntry(viewer);
+            }
         }
         emptyEntries.clear();
 
@@ -118,10 +123,14 @@ public class TablistCategory {
 
         // broadcast initial entries
         title.setListOrder(entryOrder);
-        title.broadcastEntry(viewer);
+        for (var viewer : players) {
+            title.broadcastEntry(viewer);
+        }
         for (var entry : entries) {
             entry.setListOrder(--entryOrder);
-            entry.broadcastEntry(viewer);
+            for (var viewer : players) {
+                entry.broadcastEntry(viewer);
+            }
         }
 
         // fill the empty slots with empty entries
@@ -131,23 +140,50 @@ public class TablistCategory {
                 var entry = new TablistEntry(NametagUtil.generateUsername(12), Component.empty());
                 entry.setListOrder(--entryOrder);
                 emptyEntries.add(entry);
-                entry.broadcastEntry(viewer);
+                for (var viewer : players) {
+                    entry.broadcastEntry(viewer);
+                }
             }
         }
     }
 
-    public void removeCategory(Player viewer) {
+    public void removeCategory() {
+        var players = getViewers();
+
         // remove any empty entries (if there is any)
         for (var entry : emptyEntries) {
-            entry.removeEntry(viewer);
+            for (var viewer : players) {
+                entry.removeEntry(viewer);
+            }
         }
         emptyEntries.clear();
 
         // remove any remaining entries
-        title.removeEntry(viewer);
-        for (var entry : entries) {
-            entry.removeEntry(viewer);
+        for (var viewer : players) {
+            title.removeEntry(viewer);
         }
+        for (var entry : entries) {
+            for (var viewer : players) {
+                entry.removeEntry(viewer);
+            }
+        }
+    }
+
+    public List<Player> getViewers() {
+        return viewers.stream()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    public TablistCategory addViewer(Player player) {
+        viewers.add(player.getUniqueId());
+        return this;
+    }
+
+    public TablistCategory removeViewer(Player player) {
+        viewers.remove(player.getUniqueId());
+        return this;
     }
 
 }
