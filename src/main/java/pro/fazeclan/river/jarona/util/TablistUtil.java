@@ -32,21 +32,15 @@ public class TablistUtil {
         );
     }
 
-    public static void assignCategory(World world, TablistCategories categories) {
-        worldToCategoryTaskMap.put(world.getUID(), new BukkitRunnable() {
-            final World w = world;
-            final UUID wUid = world.getUID();
+    public static void assignCategory(TablistCategories categories) {
+        worldToCategoryTaskMap.put(categories.getWorldUUID(), new BukkitRunnable() {
             final TablistCategories c = categories;
 
             @Override
             public void run() {
-                if (Bukkit.getWorld(wUid) == null) {
+                if (c.getWorld() == null) {
                     cancel();
                     return;
-                }
-
-                for (var viewer : w.getPlayers()) {
-                    c.addViewer(viewer);
                 }
 
                 c.removeCategories();

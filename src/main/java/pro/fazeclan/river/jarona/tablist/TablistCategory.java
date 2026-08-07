@@ -1,8 +1,10 @@
 package pro.fazeclan.river.jarona.tablist;
 
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.util.NametagUtil;
 
@@ -15,7 +17,8 @@ public class TablistCategory {
     private final List<TablistEntry> emptyEntries;
     private final String fakeName;
     private final Component displayComponent;
-    private final Set<UUID> viewers = new HashSet<>();
+    @Getter
+    private final UUID worldUID;
 
     public TablistCategory(String fakeName, String component, List<TablistEntry> entries) {
         this.entries = entries;
@@ -23,6 +26,7 @@ public class TablistCategory {
         this.displayComponent = MiniMessage.miniMessage().deserialize(component);
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public TablistCategory(String fakeName, Component component, List<TablistEntry> entries) {
@@ -31,6 +35,7 @@ public class TablistCategory {
         this.displayComponent = component;
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public TablistCategory(String fakeName, String component, TablistEntry... entries) {
@@ -39,6 +44,7 @@ public class TablistCategory {
         this.displayComponent = MiniMessage.miniMessage().deserialize(component);
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public TablistCategory(String fakeName, Component component, TablistEntry... entries) {
@@ -47,6 +53,7 @@ public class TablistCategory {
         this.displayComponent = component;
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public TablistCategory(String fakeName, String component, Player... players) {
@@ -59,6 +66,7 @@ public class TablistCategory {
         this.displayComponent = MiniMessage.miniMessage().deserialize(component);
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public TablistCategory(String fakeName, Component component, Player... players) {
@@ -71,6 +79,7 @@ public class TablistCategory {
         this.displayComponent = component;
         this.fakeName = fakeName;
         this.title = new TablistEntry(this.fakeName, this.displayComponent);
+        this.worldUID = null;
     }
 
     public void organizeCategory(int listOrder) {
@@ -169,21 +178,16 @@ public class TablistCategory {
         }
     }
 
+    public World getWorld() {
+        if (worldUID == null) return null;
+        return Bukkit.getWorld(worldUID);
+    }
+
     public List<Player> getViewers() {
-        return viewers.stream()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
-    public TablistCategory addViewer(Player player) {
-        viewers.add(player.getUniqueId());
-        return this;
-    }
-
-    public TablistCategory removeViewer(Player player) {
-        viewers.remove(player.getUniqueId());
-        return this;
+        if (worldUID == null) return List.of();
+        var world = Bukkit.getWorld(worldUID);
+        if (world == null) return List.of();
+        return world.getPlayers();
     }
 
 }

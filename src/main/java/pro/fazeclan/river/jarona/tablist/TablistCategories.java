@@ -1,8 +1,11 @@
 package pro.fazeclan.river.jarona.tablist;
 
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class TablistCategories {
 
@@ -16,18 +19,26 @@ public class TablistCategories {
         this.categories = categories;
     }
 
-    public TablistCategories addViewer(Player player) {
-        for (var category : categories) {
-            category.addViewer(player);
-        }
-        return this;
+    public List<UUID> getWorldUUIDs() {
+        return categories.stream()
+                .map(TablistCategory::getWorldUID)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
-    public TablistCategories removeViewer(Player player) {
-        for (var category : categories) {
-            category.removeViewer(player);
-        }
-        return this;
+    public UUID getWorldUUID() {
+        return getWorldUUIDs().getFirst();
+    }
+
+    public World getWorld() {
+        return Bukkit.getWorld(getWorldUUID());
+    }
+
+    public List<World> getWorlds() {
+        return getWorldUUIDs().stream()
+                .map(Bukkit::getWorld)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public void broadcastCategories() {
