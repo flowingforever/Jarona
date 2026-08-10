@@ -13,6 +13,7 @@ repositories {
     maven { url = uri("https://maven.pvphub.me/tofaa") }
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://repo.extendedclip.com/releases/") }
+    maven { url = uri("https://repo.xenondevs.xyz/releases") }
 }
 
 dependencies {
@@ -23,6 +24,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.12.3")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
+    implementation("xyz.xenondevs.invui:invui:2.3.0")
 }
 
 java {
@@ -32,6 +34,7 @@ java {
 tasks {
     shadowJar {
         relocate("com.jeff_media.morepersistentdatatypes", "pro.fazeclan.river.jarona.morepersistentdatatypes")
+        relocate("xyz.xenondevs.invui", "pro.fazeclan.river.jarona.invui")
     }
 
     build {
