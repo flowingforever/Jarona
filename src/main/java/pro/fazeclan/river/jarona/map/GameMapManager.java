@@ -1,6 +1,7 @@
 package pro.fazeclan.river.jarona.map;
 
 import lombok.Getter;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.util.WorldlessLocation;
@@ -8,6 +9,7 @@ import pro.fazeclan.river.jarona.util.WorldlessLocation;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class GameMapManager {
 
@@ -38,7 +40,8 @@ public class GameMapManager {
                             id,
                             config.getString("credits", "..."),
                             world,
-                            WorldlessLocation.deserialize("spawn", config)
+                            WorldlessLocation.deserialize("spawn", config),
+                            config.getStringList("supported-games").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList()
                     ));
                 });
 

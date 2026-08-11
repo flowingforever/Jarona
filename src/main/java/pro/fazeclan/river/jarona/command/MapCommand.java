@@ -9,7 +9,9 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.command.argument.GameArgument;
 import pro.fazeclan.river.jarona.command.argument.GameMapArgument;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 import pro.fazeclan.river.jarona.map.GameMapEditorSession;
 import pro.fazeclan.river.jarona.util.ServerUtil;
@@ -69,7 +71,7 @@ public class MapCommand {
                                 )
                                 .then(
                                         Commands.literal("setname")
-                                                .then(Commands.argument("name", StringArgumentType.string())
+                                                .then(Commands.argument("name", StringArgumentType.greedyString())
                                                         .executes(ctx -> {
                                                             if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
 
@@ -86,7 +88,7 @@ public class MapCommand {
                                 )
                                 .then(
                                         Commands.literal("setcredit")
-                                                .then(Commands.argument("credit", StringArgumentType.string())
+                                                .then(Commands.argument("credit", StringArgumentType.greedyString())
                                                         .executes(ctx -> {
                                                             if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
 
@@ -103,7 +105,7 @@ public class MapCommand {
                                 )
                                 .then(
                                         Commands.literal("addconfigentry")
-                                                .then(Commands.argument("entry", StringArgumentType.string())
+                                                .then(Commands.argument("entry", StringArgumentType.greedyString())
                                                         .executes(ctx -> {
                                                             if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
 
@@ -131,6 +133,32 @@ public class MapCommand {
 
                                                     return Command.SINGLE_SUCCESS;
                                                 })
+                                )
+                                .then(
+                                        Commands.literal("addsupportedgame")
+                                                .then(Commands.argument("game", new GameArgument())
+                                                        .executes(ctx -> {
+                                                            if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                                            var session = new GameMapEditorSession(player.getWorld());
+                                                            session.addSupportedGame(ctx.getArgument("game", Game.class));
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        })
+                                                )
+                                )
+                                .then(
+                                        Commands.literal("removesupportedgame")
+                                                .then(Commands.argument("game", new GameArgument())
+                                                        .executes(ctx -> {
+                                                            if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                                            var session = new GameMapEditorSession(player.getWorld());
+                                                            session.removeSupportedGame(ctx.getArgument("game", Game.class));
+
+                                                            return Command.SINGLE_SUCCESS;
+                                                        })
+                                                )
                                 )
                                 .then(
                                         Commands.literal("removeconfigentry")

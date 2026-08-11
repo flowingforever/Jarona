@@ -36,6 +36,11 @@ public class StartCommand {
                                                         ));
                                                         return Command.SINGLE_SUCCESS;
                                                     }
+                                                    if (!map.isGameSupported(game)) {
+                                                        ctx.getSource().getSender().sendMessage(ServerUtil.formatComponent(
+                                                                "<red>This map does not support this game!</red>"
+                                                        ));
+                                                    }
 
                                                     GameUtil.startGameWithMap(game.getKey(), map);
                                                     return Command.SINGLE_SUCCESS;

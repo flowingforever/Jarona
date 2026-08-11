@@ -22,7 +22,7 @@ And this plugin is not meant to be used on survival servers. **Your items/potion
 - [ ] Player Statistic Registry
 - [ ] Achievement and/or Challenge Registry
 - [ ] Map Voting
-- [ ] Map supporting Minigame checks
+- [X] ~~Map supporting Minigame checks~~
 - [ ] Only supported maps show up in autocomplete
 - [ ] Game Event Registry
 - [ ] Party System

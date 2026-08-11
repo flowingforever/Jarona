@@ -1,29 +1,31 @@
 package pro.fazeclan.river.jarona.map;
 
-import com.jeff_media.morepersistentdatatypes.DataType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.persistence.PersistentDataType;
 import org.codehaus.plexus.util.StringUtils;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.util.WorldlessLocation;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameMapEditorSession {
 
     final World world;
+    final YamlConfiguration config;
 
     public GameMapEditorSession(World world) {
         this.world = world;
+        config = getOrCreateConfig();
     }
 
     public String getId() {
@@ -31,51 +33,41 @@ public class GameMapEditorSession {
     }
 
     public String getName() {
-        return getValue(
-                Jarona.getKey("map_name"),
-                PersistentDataType.STRING,
-                "Empty"
-        );
+        return getValue("name", "...");
     }
 
     public void setName(String name) {
-        setValue(
-                Jarona.getKey("map_name"),
-                PersistentDataType.STRING,
-                name
-        );
+        setValue("name", name);
     }
 
     public String getCredit() {
-        return getValue(
-                Jarona.getKey("map_credit"),
-                PersistentDataType.STRING,
-                "Empty"
-        );
+        return getValue("credits", "...");
     }
 
     public void setCredit(String credit) {
-        setValue(
-                Jarona.getKey("map_credit"),
-                PersistentDataType.STRING,
-                credit
-        );
+        setValue("credits", credit);
     }
 
     public void setSpawn(Location location) {
-        setValue(
-                Jarona.getKey("map_spawn"),
-                DataType.LOCATION,
-                location
-        );
+        WorldlessLocation.fromLocation(location).serialize("spawn", config);
     }
 
     public Location getSpawn() {
-        return getValue(
-                Jarona.getKey("map_spawn"),
-                DataType.LOCATION,
-                new Location(world, 0, 0, 0, 0, 0)
-        );
+        return WorldlessLocation.deserialize("spawn", config).toLocation(world);
+    }
+
+    public void addSupportedGame(Game game) {
+        var supportedGames = new ArrayList<>(getStringList("supported-games"));
+        if (!supportedGames.contains(game.getKey().asString())) {
+            supportedGames.add(game.getKey().asString());
+        }
+        setValue("supported-games", (List<String>) supportedGames);
+    }
+
+    public void removeSupportedGame(Game game) {
+        var supportedGames = new ArrayList<>(getStringList("supported-games"));
+        supportedGames.remove(game.getKey().asString());
+        setValue("supported-games", (List<String>) supportedGames);
     }
 
     public void addConfigEntry(String input, @Nullable Player player) {
@@ -169,30 +161,22 @@ public class GameMapEditorSession {
 
         // set the last few things in the config
         var configFile = new File(saveLocation, "map_config.yml");
-        var config = getOrCreateConfig();
-        config.set("name", getName());
-        config.set("credits", getCredit());
-        WorldlessLocation.fromLocation(getSpawn()).serialize("spawn", config);
         try { config.save(configFile); } catch (IOException e) { throw new RuntimeException(e); }
 
         // reload registry
         Jarona.getInstance().getMapManager().reloadRegistry();
     }
 
-    private <P, C> C getValue(
-            NamespacedKey key,
-            PersistentDataType<P, C> type,
-            C defaultValue
-    ) {
-        return world.getPersistentDataContainer().getOrDefault(key, type, defaultValue);
+    private <T> T getValue(String path, T def) {
+        return (T) config.get(path, def);
     }
 
-    private <P, C> void setValue(
-            NamespacedKey key,
-            PersistentDataType<P, C> type,
-            C value
-    ) {
-        world.getPersistentDataContainer().set(key, type, value);
+    private List<String> getStringList(String path) {
+        return config.getStringList("path");
+    }
+
+    private <T> void setValue(String path, T value) {
+        this.config.set(path, value);
     }
 
 }

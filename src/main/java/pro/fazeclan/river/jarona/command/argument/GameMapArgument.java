@@ -11,12 +11,28 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import io.papermc.paper.command.brigadier.argument.CustomArgumentType;
 import net.kyori.adventure.text.Component;
+import org.bukkit.NamespacedKey;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 
 import java.util.concurrent.CompletableFuture;
 
 public class GameMapArgument implements CustomArgumentType<GameMap, String> {
+
+    final NamespacedKey gameKey;
+
+    public GameMapArgument() {
+        this.gameKey = null;
+    }
+
+    public GameMapArgument(NamespacedKey gameKey) {
+        this.gameKey = gameKey;
+    }
+
+    public GameMapArgument(Game game) {
+        this.gameKey = game.getKey();
+    }
 
     private static final SimpleCommandExceptionType ERROR_REGISTRY_EMPTY = new SimpleCommandExceptionType(
             MessageComponentSerializer.message().serialize(Component.text("The game map registry is empty!"))
@@ -64,7 +80,11 @@ public class GameMapArgument implements CustomArgumentType<GameMap, String> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         var manager = Jarona.getInstance().getMapManager();
-        manager.getRegistry().keySet()
+        manager.getRegistry()
+                .values()
+                .stream()
+                .filter(map -> map.isGameSupported(gameKey))
+                .map(GameMap::id)
                 .forEach(builder::suggest);
         return builder.buildFuture();
     }
