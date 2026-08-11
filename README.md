@@ -29,8 +29,3 @@ And this plugin is not meant to be used on survival servers. **Your items/potion
 - [ ] Spectate Menu
 - [ ] Nicknames
 - [ ] Tablist Control
-
-## Known Issues
-
-- [ ] Dimension unloading and deleting may fail silently
-- [ ] Queue autostart is inconsistent and fails after the first attempt
