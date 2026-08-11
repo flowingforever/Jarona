@@ -15,7 +15,7 @@ Okay, way more now. A queue system, a condition system (meant more for cooldowns
 
 Though, I would not recommend using this API with any other minigame plugins (other than the ones that depend on it, of course) because it may or may not override some aspects of those other plugins.
 
-And this plugin is not meant to be used on survival servers. **Your items/potion effects will be lost if you queue into a minigame using this API!! Be warned!!**
+And this plugin is not meant to be used on survival servers. ~~**Your items/potion effects will be lost if you queue into a minigame using this API!! Be warned!!**~~ Inventory in particular is no longer an issue during games. It saves in between games.
 
 ## Plans
 
