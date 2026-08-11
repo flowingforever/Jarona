@@ -42,8 +42,6 @@ public class QueueCommand {
                                         ));
                                     }
 
-                                    manager.startGameQueueLoop(game);
-
                                     return Command.SINGLE_SUCCESS;
                                 })
                                 .then(

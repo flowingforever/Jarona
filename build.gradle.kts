@@ -2,7 +2,6 @@ plugins {
     id("java-library")
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
     id("com.gradleup.shadow") version "9.4.3"
-    id("xyz.jpenilla.run-paper") version "3.0.2"
     id("io.freefair.lombok") version "9.5.0"
     `maven-publish`
 }
@@ -39,18 +38,6 @@ tasks {
 
     build {
         dependsOn(shadowJar)
-    }
-
-    runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.2")
-        jvmArgs("-Xms2G", "-Xmx2G", "-Dcom.mojang.eula.agree=true")
-        downloadPlugins {
-            modrinth("packetevents", "2.13.0+spigot")
-            modrinth("nbtapi", "2.15.7")
-        }
     }
 
     processResources {

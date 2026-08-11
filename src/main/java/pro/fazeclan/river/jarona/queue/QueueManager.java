@@ -1,32 +1,96 @@
 package pro.fazeclan.river.jarona.queue;
 
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.util.GameUtil;
-import pro.fazeclan.river.jarona.util.SchedulingUtil;
 import pro.fazeclan.river.jarona.util.ServerUtil;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class QueueManager {
 
-    private final Map<UUID, NamespacedKey> playerQueueMap = new HashMap<>();
-    private final Set<NamespacedKey> gamesStarting = new HashSet<>();
+    private final ConcurrentLinkedQueue<QueuedPlayer> playerQueue = new ConcurrentLinkedQueue<>();
+    private BukkitTask queueCheckLoop;
+
+    public void startLoop() {
+        if (this.queueCheckLoop == null) {
+            this.queueCheckLoop = new BukkitRunnable() {
+                private final Map<Game, Integer> possibleGames = new HashMap<>(16);
+                private final Jarona plugin = Jarona.getInstance();
+
+                @Override
+                public void run() {
+                    var initialSeconds = plugin.getConfig().getInt("start-wait-period", 30);
+                    for (var game : plugin.getGameManager().getRegistry().values()) {
+                        if (areEnoughPlayersQueued(game)) {
+                            possibleGames.compute(game, (_, integer) -> {
+                                if (integer == null) {
+                                    return initialSeconds;
+                                } else {
+                                    return integer - 1;
+                                }
+                            });
+                        } else {
+                            possibleGames.remove(game);
+                        }
+                    }
+
+                    for (var entry : possibleGames.entrySet()) {
+                        var seconds = entry.getValue();
+                        var game = entry.getKey();
+                        if (seconds == initialSeconds
+                                || seconds == (initialSeconds / 2)
+                                || seconds == 5
+                                || seconds == 3
+                                || seconds == 2
+                                || seconds == 1) {
+                            for (var player : GameUtil.getAllPlayersNotInGame()) {
+                                player.sendMessage(ServerUtil.formatComponent(
+                                        "<red>" + game.getName() + " will be starting in " + seconds + " seconds!</red>"
+                                ));
+                            }
+                        }
+
+                        if (seconds <= 0) {
+                            if (game.isRequiresMap()) {
+                                GameUtil.startGameWithRandomMap(game);
+                            } else {
+                                GameUtil.startGame(game.getKey(), game.isVoidWorld());
+                            }
+                        }
+                    }
+                }
+
+            }.runTaskTimer(Jarona.getInstance(), 0L, 20L);
+        }
+    }
 
     public List<Player> getPlayersQueued(Game game) {
         return getPlayersQueued(game.getKey());
     }
 
     public List<Player> getPlayersQueued(NamespacedKey gameKey) {
-        return playerQueueMap.entrySet().stream()
-                .filter(entry -> Objects.equals(entry.getValue(), gameKey))
-                .map(Map.Entry::getKey)
-                .map(Bukkit::getPlayer)
+        return playerQueue.stream()
+                .filter(qp -> qp.isQueuedFor(gameKey))
+                .map(QueuedPlayer::getPlayer)
                 .filter(Objects::nonNull)
+                .toList();
+    }
+
+    public List<QueuedPlayer> getQueuedPlayers(NamespacedKey gameKey) {
+        return playerQueue.stream()
+                .filter(qp -> qp.isQueuedFor(gameKey) && qp.getPlayer() != null)
+                .toList();
+    }
+
+    public List<QueuedPlayer> getQueuedPlayers(Game game) {
+        return playerQueue.stream()
+                .filter(qp -> qp.isQueuedFor(game) && qp.getPlayer() != null)
                 .toList();
     }
 
@@ -35,18 +99,18 @@ public class QueueManager {
     }
 
     public List<UUID> getUUIDsQueued(NamespacedKey gameKey) {
-        return playerQueueMap.entrySet().stream()
-                .filter(entry -> Objects.equals(entry.getValue(), gameKey))
-                .map(Map.Entry::getKey)
+        return playerQueue.stream()
+                .filter(qp -> qp.isQueuedFor(gameKey))
+                .map(QueuedPlayer::getPlayerUUID)
                 .toList();
     }
 
     public List<Player> getAndRemovePlayersQueued(Game game) {
-        var queued = getPlayersQueued(game);
-        for (Player player : queued) {
-            playerQueueMap.remove(player.getUniqueId());
+        var queued = getQueuedPlayers(game);
+        for (QueuedPlayer player : queued) {
+            playerQueue.remove(player);
         }
-        return queued;
+        return queued.stream().map(QueuedPlayer::getPlayer).toList();
     }
 
     public void queuePlayer(Player player, Game game) {
@@ -62,15 +126,15 @@ public class QueueManager {
     }
 
     public void queuePlayer(UUID uuid, NamespacedKey gameKey) {
-        playerQueueMap.put(uuid, gameKey);
+        playerQueue.add(new QueuedPlayer(uuid, gameKey));
     }
 
     public void unqueuePlayer(Player player) {
-        playerQueueMap.remove(player.getUniqueId());
+        playerQueue.removeIf(qp -> qp.getPlayer().equals(player));
     }
 
     public void unqueuePlayer(UUID uuid) {
-        playerQueueMap.remove(uuid);
+        playerQueue.removeIf(qp -> qp.getPlayerUUID().equals(uuid));
     }
 
     public boolean isQueued(Player player, Game game) {
@@ -86,79 +150,11 @@ public class QueueManager {
     }
 
     public boolean isQueued(UUID uuid, NamespacedKey gameKey) {
-        var gameQueued = playerQueueMap.get(uuid);
-        return gameQueued != null && gameQueued.equals(gameKey);
+        return playerQueue.stream().anyMatch(qp -> qp.getPlayerUUID().equals(uuid) && qp.getGameKey().equals(gameKey));
     }
 
     public boolean areEnoughPlayersQueued(Game game) {
         return getPlayersQueued(game.getKey()).size() >= game.getMinimumPlayers();
-    }
-
-    public void queueGameToStart(Game game) {
-        gamesStarting.add(game.getKey());
-    }
-
-    public void unqueueGameToStart(Game game) {
-        gamesStarting.remove(game.getKey());
-    }
-
-    public boolean isGameQueuedToStart(Game game) {
-        return gamesStarting.contains(game.getKey());
-    }
-
-    public void startGameQueueLoop(Game game) {
-        if (!isGameQueuedToStart(game) && areEnoughPlayersQueued(game)) {
-            var config = Jarona.getInstance().getConfig();
-            queueGameToStart(game);
-
-            int initialTime = config.getInt("start-wait-period", 15) * 20;
-            AtomicInteger tick = new AtomicInteger(initialTime);
-            SchedulingUtil.interval(0L, 1L, () -> {
-                if (!areEnoughPlayersQueued(game)) {
-                    unqueueGameToStart(game);
-                    return false;
-                }
-
-                if (tick.get() == initialTime) {
-                    Bukkit.broadcast(ServerUtil.formatComponent(
-                            "<green>" + game.getName() + " is starting in " + (tick.get() / 20) + " seconds!</green>"
-                    ));
-                }
-
-                if (tick.get() == 100) {
-                    Bukkit.broadcast(ServerUtil.formatComponent(
-                            "<green>" + game.getName() + " is starting in 5 seconds!</green>"
-                    ));
-                }
-
-                if (tick.get() == 60) {
-                    Bukkit.broadcast(ServerUtil.formatComponent(
-                            "<green>" + game.getName() + " is starting in 3 seconds!</green>"
-                    ));
-                }
-
-                if (tick.get() == 40) {
-                    Bukkit.broadcast(ServerUtil.formatComponent(
-                            "<green>" + game.getName() + " is starting in 2 seconds!</green>"
-                    ));
-                }
-
-                if (tick.get() == 20) {
-                    Bukkit.broadcast(ServerUtil.formatComponent(
-                            "<green>" + game.getName() + " is starting in 1 second!</green>"
-                    ));
-                }
-
-                if (tick.get() == 0) {
-                    GameUtil.startGameWithRandomMap(game.getKey());
-                    return false;
-                }
-
-                tick.getAndDecrement();
-
-                return true;
-            });
-        }
     }
 
 }

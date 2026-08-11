@@ -4,11 +4,13 @@ import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.util.WorldlessLocation;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class GameMapManager {
@@ -45,6 +47,18 @@ public class GameMapManager {
                     ));
                 });
 
+    }
+
+    public List<GameMap> getAllMapsSupporting(NamespacedKey gameKey) {
+        return registry.values().stream()
+                .filter(map -> map.isGameSupported(gameKey))
+                .toList();
+    }
+
+    public List<GameMap> getAllMapsSupporting(Game game) {
+        return registry.values().stream()
+                .filter(map -> map.isGameSupported(game))
+                .toList();
     }
 
 }

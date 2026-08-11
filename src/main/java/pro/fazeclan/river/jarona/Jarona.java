@@ -56,6 +56,7 @@ public final class Jarona extends JavaPlugin {
         this.conditionManager.initTasks();
         this.mapManager.reloadRegistry();
         this.tablistManager.startTask();
+        this.queueManager.startLoop();
 
         // commands
         var command = Commands.literal("jarona")

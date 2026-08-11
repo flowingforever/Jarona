@@ -11,6 +11,7 @@ import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -26,8 +27,12 @@ public class GameUtil {
         }
     }
 
+    public static void startGameWithRandomMap(Game game) {
+        startGameWithRandomMap(game.getKey());
+    }
+
     public static void startGameWithRandomMap(NamespacedKey key) {
-        var mapCollection = Jarona.getInstance().getMapManager().getRegistry().values();
+        var mapCollection = Jarona.getInstance().getMapManager().getAllMapsSupporting(key);
         int index = ThreadLocalRandom.current().nextInt(mapCollection.size());
         var map = mapCollection.stream()
                 .skip(index)
@@ -162,6 +167,10 @@ public class GameUtil {
             nbt.mergeCompound(NBT.parseNBT(inventory));
         });
         player.updateInventory();
+    }
+
+    public static List<? extends Player> getAllPlayersNotInGame() {
+        return Bukkit.getOnlinePlayers().stream().filter(p -> !hasGame(p.getWorld())).toList();
     }
 
 }
