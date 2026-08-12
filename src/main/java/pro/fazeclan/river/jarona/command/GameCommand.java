@@ -6,6 +6,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.command.argument.GameArgument;
 import pro.fazeclan.river.jarona.command.argument.GameMapArgument;
@@ -52,20 +53,40 @@ public class GameCommand {
                                         )
                         ))
                 .then(Commands.literal("stop")
-                        .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.start"))
+                        .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.stop"))
                         .then(
                                 Commands.argument("player", ArgumentTypes.player())
                                         .executes(ctx -> {
                                             var targetResolver = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
-                                            var players = targetResolver.resolve(ctx.getSource());
+                                            var player = targetResolver.resolve(ctx.getSource()).getFirst();
 
-                                            for (Player player : players) {
-                                                GameUtil.endGame(player.getWorld());
-                                            }
+                                            GameUtil.endGame(player.getWorld());
 
                                             return Command.SINGLE_SUCCESS;
                                         })
-                        ));
+                        ))
+                .then(Commands.literal("spectate")
+                        .then(
+                                Commands.argument("player", ArgumentTypes.player())
+                                        .executes(ctx -> {
+                                            if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                            var targetResolver = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
+                                            var gp = targetResolver.resolve(ctx.getSource()).getFirst();
+
+                                            if (!GameUtil.hasGame(gp.getWorld())) {
+                                                player.sendMessage(ServerUtil.formatComponent(
+                                                        "<red>This player is not in a game!</red>"
+                                                ));
+                                                return Command.SINGLE_SUCCESS;
+                                            }
+                                            player.setGameMode(GameMode.SPECTATOR);
+                                            player.teleport(gp);
+
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                        )
+                );
     }
 
 }
