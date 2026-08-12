@@ -1,8 +1,10 @@
 package pro.fazeclan.river.jarona;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import de.tr7zw.nbtapi.NBT;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
@@ -12,9 +14,13 @@ import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.map.GameMapManager;
+import pro.fazeclan.river.jarona.party.PartyManager;
 import pro.fazeclan.river.jarona.placeholder.JaronaExpansion;
 import pro.fazeclan.river.jarona.queue.QueueManager;
 import pro.fazeclan.river.jarona.tablist.TablistManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Jarona extends JavaPlugin {
 
@@ -33,6 +39,9 @@ public final class Jarona extends JavaPlugin {
     @Getter
     QueueManager queueManager;
 
+    @Getter
+    PartyManager partyManager;
+
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -43,6 +52,7 @@ public final class Jarona extends JavaPlugin {
         this.mapManager = new GameMapManager();
         this.tablistManager = new TablistManager();
         this.queueManager = new QueueManager();
+        this.partyManager = new PartyManager();
     }
 
     @Override
@@ -59,16 +69,24 @@ public final class Jarona extends JavaPlugin {
         this.queueManager.startLoop();
 
         // commands
-        var command = Commands.literal("jarona")
-                .then(StartCommand.command())
-                .then(MapCommand.command())
-                .then(QueueCommand.command())
-                .then(StopCommand.command())
-                .then(ConditionCommand.command())
-                .then(ConfigCommand.command())
-                .build();
+        List<LiteralArgumentBuilder<CommandSourceStack>> subcommands = new ArrayList<>();
+        var command = Commands.literal("jarona");
+        subcommands.add(ConditionCommand.command());
+        subcommands.add(ConfigCommand.command());
+        subcommands.add(MapCommand.command());
+        subcommands.add(QueueCommand.command());
+        subcommands.add(GameCommand.command());
+        subcommands.add(PartyCommand.command());
+
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
-            commands.registrar().register(command);
+            // add each subcommand and register them
+            subcommands.forEach(subcommand -> {
+                command.then(subcommand);
+                commands.registrar().register(subcommand.build());
+            });
+
+            // root command
+            commands.registrar().register(command.build());
         });
 
         // config

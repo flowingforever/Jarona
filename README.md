@@ -23,9 +23,9 @@ And this plugin is not meant to be used on survival servers. ~~**Your items/poti
 - [ ] Achievement and/or Challenge Registry
 - [ ] Map Voting
 - [X] ~~Map supporting Minigame checks~~
-- [ ] Only supported maps show up in autocomplete
+- [ ] ~~Only supported maps show up in autocomplete~~ (Moved further along; not something I want to focus on at the moment.)
 - [ ] Game Event Registry
-- [ ] Party System
+- [X] Party System
 - [ ] Spectate Menu
 - [ ] Nicknames
 - [ ] Tablist Control

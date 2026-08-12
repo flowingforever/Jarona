@@ -11,27 +11,28 @@ import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GameUtil {
 
-    public static void startGame(NamespacedKey key, boolean voidWorld) {
+    public static void startGame(NamespacedKey key, boolean voidWorld, Player... players) {
         var uuid = UUID.randomUUID();
         NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
         if (voidWorld) {
-            startGame(key, WorldUtil.createVoidWorld(worldKey));
+            startGame(key, WorldUtil.createVoidWorld(worldKey), players);
         } else {
-            startGame(key, WorldUtil.createWorld(worldKey));
+            startGame(key, WorldUtil.createWorld(worldKey), players);
         }
     }
 
-    public static void startGameWithRandomMap(Game game) {
-        startGameWithRandomMap(game.getKey());
+    public static void startGameWithRandomMap(Game game, Player... players) {
+        startGameWithRandomMap(game.getKey(), players);
     }
 
-    public static void startGameWithRandomMap(NamespacedKey key) {
+    public static void startGameWithRandomMap(NamespacedKey key, Player... players) {
         var mapCollection = Jarona.getInstance().getMapManager().getAllMapsSupporting(key);
         int index = ThreadLocalRandom.current().nextInt(mapCollection.size());
         var map = mapCollection.stream()
@@ -41,10 +42,10 @@ public class GameUtil {
         if (map == null) {
             return;
         }
-        startGameWithMap(key, map);
+        startGameWithMap(key, map, players);
     }
 
-    public static void startGameWithMap(NamespacedKey key, GameMap map) {
+    public static void startGameWithMap(NamespacedKey key, GameMap map, Player... players) {
         var uuid = UUID.randomUUID();
         NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());
 
@@ -60,10 +61,10 @@ public class GameUtil {
         }
 
         var world = WorldUtil.createWorld(worldKey);
-        startGame(key, world);
+        startGame(key, world, players);
     }
 
-    public static void startGame(NamespacedKey key, World world) {
+    public static void startGame(NamespacedKey key, World world, Player... players) {
         var plugin = Jarona.getInstance();
         var queueManager = plugin.getQueueManager();
         var gameManager = plugin.getGameManager();
@@ -72,11 +73,19 @@ public class GameUtil {
             return;
         }
         world.getPersistentDataContainer().set(Jarona.getKey("game"), PersistentDataType.STRING, key.toString());
-        queueManager.getAndRemovePlayersQueued(game).forEach(player -> {
-            player.teleport(new Location(world, 0, 10, 0));
-            savePlayer(player);
-            resetPlayer(player, GameMode.SPECTATOR);
-        });
+        if (players.length == 0) {
+            queueManager.getAndRemovePlayersQueued(game).forEach(player -> {
+                player.teleport(new Location(world, 0, 10, 0));
+                savePlayer(player);
+                resetPlayer(player, GameMode.SPECTATOR);
+            });
+        } else {
+            Arrays.stream(players).forEach(player -> {
+                player.teleport(new Location(world, 0, 10, 0));
+                savePlayer(player);
+                resetPlayer(player, GameMode.SPECTATOR);
+            });
+        }
         game.init(world, world.getPlayers());
         var task = Bukkit.getScheduler().runTaskTimer(Jarona.getInstance(), () -> game.tick(world, world.getPlayers()), 1, 1);
         world.getPersistentDataContainer().set(Jarona.getKey("loop_id"), PersistentDataType.INTEGER, task.getTaskId());
