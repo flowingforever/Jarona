@@ -80,7 +80,8 @@ public class GameCommand {
                                                 ));
                                                 return Command.SINGLE_SUCCESS;
                                             }
-                                            player.setGameMode(GameMode.SPECTATOR);
+                                            GameUtil.savePlayer(player);
+                                            GameUtil.resetPlayer(player, GameMode.SPECTATOR);
                                             player.teleport(gp);
 
                                             return Command.SINGLE_SUCCESS;
