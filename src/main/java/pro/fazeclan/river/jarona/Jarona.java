@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.GameManager;
+import pro.fazeclan.river.jarona.listener.ChatListener;
 import pro.fazeclan.river.jarona.map.GameMapManager;
 import pro.fazeclan.river.jarona.party.PartyManager;
 import pro.fazeclan.river.jarona.placeholder.JaronaExpansion;
@@ -77,6 +78,7 @@ public final class Jarona extends JavaPlugin {
         subcommands.add(QueueCommand.command());
         subcommands.add(GameCommand.command());
         subcommands.add(PartyCommand.command());
+        subcommands.add(NicknameCommand.command());
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             // add each subcommand and register them
@@ -91,6 +93,8 @@ public final class Jarona extends JavaPlugin {
 
         // config
         saveDefaultConfig();
+
+        getServer().getPluginManager().registerEvents(new ChatListener(), this);
     }
 
     @Override

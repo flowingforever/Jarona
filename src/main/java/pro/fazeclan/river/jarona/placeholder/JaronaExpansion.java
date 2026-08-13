@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pro.fazeclan.river.jarona.util.ConditionUtil;
+import pro.fazeclan.river.jarona.util.NicknameUtil;
 
 public class JaronaExpansion extends PlaceholderExpansion {
 
@@ -25,8 +26,10 @@ public class JaronaExpansion extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
-        if (params.equalsIgnoreCase("game_condition")) {
+        if (params.equals("game_condition")) {
             return ConditionUtil.worldConditionsToFormattedString(player.getWorld());
+        } else if (params.equals("nickname")) {
+            return NicknameUtil.getNickname(player);
         }
         return null;
     }

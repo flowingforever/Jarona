@@ -26,5 +26,5 @@ And this plugin is not meant to be used on survival servers. ~~**Your items/poti
 - [ ] Game Event Registry
 - [X] Party System
 - [X] Spectate Command
-- [ ] Nicknames
+- [X] Nicknames
 - [ ] Tablist Control
