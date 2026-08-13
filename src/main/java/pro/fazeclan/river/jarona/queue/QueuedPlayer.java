@@ -19,8 +19,6 @@ public class QueuedPlayer {
     @Getter
     @Setter
     private NamespacedKey gameKey;
-    @Getter
-    private GameMap votedMap;
 
     public QueuedPlayer(UUID playerUUID, Game game) {
         this.playerUUID = playerUUID;
@@ -30,18 +28,6 @@ public class QueuedPlayer {
     public QueuedPlayer(UUID playerUUID, NamespacedKey gameKey) {
         this.playerUUID = playerUUID;
         this.gameKey = gameKey;
-    }
-
-    public QueuedPlayer(UUID playerUUID, Game game, @Nullable GameMap map) {
-        this.playerUUID = playerUUID;
-        this.gameKey = game.getKey();
-        this.votedMap = map;
-    }
-
-    public QueuedPlayer(UUID playerUUID, NamespacedKey gameKey, @Nullable GameMap map) {
-        this.playerUUID = playerUUID;
-        this.gameKey = gameKey;
-        this.votedMap = map;
     }
 
     public Player getPlayer() {
@@ -59,4 +45,5 @@ public class QueuedPlayer {
     public boolean isQueuedFor(Game game) {
         return isQueuedFor(game.getKey());
     }
+
 }

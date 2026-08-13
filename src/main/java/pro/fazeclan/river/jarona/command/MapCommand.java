@@ -14,6 +14,7 @@ import pro.fazeclan.river.jarona.command.argument.GameMapArgument;
 import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.map.GameMap;
 import pro.fazeclan.river.jarona.map.GameMapEditorSession;
+import pro.fazeclan.river.jarona.screen.MapVotingScreen;
 import pro.fazeclan.river.jarona.util.ServerUtil;
 import pro.fazeclan.river.jarona.util.WorldUtil;
 
@@ -23,9 +24,28 @@ public class MapCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> command() {
         return Commands.literal("map")
-                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.map"))
+                .then(
+                        Commands.literal("vote")
+                                .executes(ctx -> {
+                                    if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                                    var queue = Jarona.getInstance().getQueueManager();
+                                    var queuedPlayer = queue.getQueuedPlayer(player);
+                                    if (queuedPlayer == null) {
+                                        player.sendMessage(ServerUtil.formatComponent(
+                                                "<red>You are not in the queue.</red>"
+                                        ));
+                                        return Command.SINGLE_SUCCESS;
+                                    }
+
+                                    MapVotingScreen.handleScreen(queuedPlayer, null);
+
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                )
                 .then(
                         Commands.literal("reload")
+                                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.map.reload"))
                                 .executes(ctx -> {
                                     var manager = Jarona.getInstance().getMapManager();
                                     manager.reloadRegistry();
@@ -39,6 +59,7 @@ public class MapCommand {
                 )
                 .then(
                         Commands.literal("editor")
+                                .requires(ctx -> ctx.getSender().hasPermission("jarona.admin.map.editor"))
                                 .then(
                                         Commands.literal("loadmap")
                                                 .then(Commands.argument("map", new GameMapArgument())

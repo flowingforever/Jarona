@@ -6,21 +6,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.game.Game;
+import pro.fazeclan.river.jarona.map.GameMap;
+import pro.fazeclan.river.jarona.screen.MapVotingScreen;
 import pro.fazeclan.river.jarona.util.GameUtil;
 import pro.fazeclan.river.jarona.util.ServerUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class QueueManager {
 
-    private final ConcurrentLinkedQueue<QueuedPlayer> playerQueue = new ConcurrentLinkedQueue<>();
+    private final CopyOnWriteArrayList<QueuedPlayer> playerQueue = new CopyOnWriteArrayList<>();
+    private final ArrayList<QueuedGame> possibleGames = new ArrayList<>(16);
     private BukkitTask queueCheckLoop;
 
     public void startLoop() {
         if (this.queueCheckLoop == null) {
             this.queueCheckLoop = new BukkitRunnable() {
-                private final Map<Game, Integer> possibleGames = new HashMap<>(16);
                 private final Jarona plugin = Jarona.getInstance();
 
                 @Override
@@ -28,21 +31,32 @@ public class QueueManager {
                     var initialSeconds = plugin.getConfig().getInt("start-wait-period", 30);
                     for (var game : plugin.getGameManager().getRegistry().values()) {
                         if (areEnoughPlayersQueued(game)) {
-                            possibleGames.compute(game, (_, integer) -> {
-                                if (integer == null) {
-                                    return initialSeconds;
-                                } else {
-                                    return integer - 1;
+                            if (possibleGames.stream().noneMatch(qg -> qg.getGame().equals(game))) {
+                                possibleGames.add(new QueuedGame(game, initialSeconds + 1));
+                            }
+                            possibleGames.forEach(qg -> {
+                                if (qg.getGame().equals(game)) {
+                                    qg.decrementSeconds();
                                 }
                             });
                         } else {
-                            possibleGames.remove(game);
+                            possibleGames.removeIf(qg -> qg.getGame().equals(game));
                         }
                     }
 
-                    for (var entry : possibleGames.entrySet()) {
-                        var seconds = entry.getValue();
-                        var game = entry.getKey();
+                    for (var entry : possibleGames) {
+                        var seconds = entry.getSecondsRemain();
+                        var game = entry.getGame();
+
+                        if (seconds == initialSeconds && game.isRequiresMap()) {
+                            for (var player : getQueuedPlayers(game)) {
+                                MapVotingScreen.handleScreen(player, null);
+                                player.getPlayer().sendMessage(ServerUtil.formatComponent(
+                                        "<b><green><click:run_command:'/jarona:map vote'>Click here to vote for the next map!</green></b>"
+                                ));
+                            }
+                        }
+
                         if (seconds == initialSeconds
                                 || seconds == (initialSeconds / 2)
                                 || seconds == 5
@@ -58,7 +72,7 @@ public class QueueManager {
 
                         if (seconds <= 0) {
                             if (game.isRequiresMap()) {
-                                GameUtil.startGameWithRandomMap(game);
+                                GameUtil.startGameWithVotedMap(game);
                             } else {
                                 GameUtil.startGame(game.getKey(), game.isVoidWorld());
                             }
@@ -92,6 +106,13 @@ public class QueueManager {
         return playerQueue.stream()
                 .filter(qp -> qp.isQueuedFor(game) && qp.getPlayer() != null)
                 .toList();
+    }
+
+    public QueuedPlayer getQueuedPlayer(Player player) {
+        return playerQueue.stream()
+                .filter(qp -> qp.getPlayer().equals(player))
+                .findFirst()
+                .orElse(null);
     }
 
     public List<UUID> getUUIDsQueued(Game game) {
@@ -155,6 +176,44 @@ public class QueueManager {
 
     public boolean areEnoughPlayersQueued(Game game) {
         return getPlayersQueued(game.getKey()).size() >= game.getMinimumPlayers();
+    }
+
+    public boolean setPlayerVote(Player player, Game game, GameMap map) {
+        var queuedGame = possibleGames.stream().filter(qg -> qg.getGame().equals(game)).findFirst().orElse(null);
+        if (queuedGame == null) return false;
+        queuedGame.vote(player, map);
+        return true;
+    }
+
+    public boolean setPlayerVote(Player player, NamespacedKey gameKey, GameMap map) {
+        var queuedGame = possibleGames.stream().filter(qg -> qg.getGame().getKey().equals(gameKey)).findFirst().orElse(null);
+        if (queuedGame == null) return false;
+        queuedGame.vote(player, map);
+        return true;
+    }
+
+    public long getMapVotes(Game game, GameMap map) {
+        var queuedGame = possibleGames.stream().filter(qg -> qg.getGame().equals(game)).findFirst().orElse(null);
+        if (queuedGame == null) {
+            return 0;
+        }
+        return queuedGame.getMapVotes(map);
+    }
+
+    public long getMapVotes(NamespacedKey gameKey, GameMap map) {
+        var queuedGame = possibleGames.stream().filter(qg -> qg.getGame().getKey().equals(gameKey)).findFirst().orElse(null);
+        if (queuedGame == null) {
+            return 0;
+        }
+        return queuedGame.getMapVotes(map);
+    }
+
+    public GameMap getMostVotedMap(NamespacedKey gameKey) {
+        var queuedGame = possibleGames.stream().filter(qg -> qg.getGame().getKey().equals(gameKey)).findFirst().orElse(null);
+        if (queuedGame == null) {
+            return null;
+        }
+        return queuedGame.getHighestVoted();
     }
 
 }

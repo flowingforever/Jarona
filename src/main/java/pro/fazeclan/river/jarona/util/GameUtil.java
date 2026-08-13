@@ -45,6 +45,20 @@ public class GameUtil {
         startGameWithMap(key, map, players);
     }
 
+    public static void startGameWithVotedMap(Game game, Player... players) {
+        startGameWithVotedMap(game.getKey(), players);
+    }
+
+    public static void startGameWithVotedMap(NamespacedKey key, Player... players) {
+        var queue = Jarona.getInstance().getQueueManager();
+        var map = queue.getMostVotedMap(key);
+        if (map == null) {
+            startGameWithRandomMap(key, players);
+        } else {
+            startGameWithMap(key, map, players);
+        }
+    }
+
     public static void startGameWithMap(NamespacedKey key, GameMap map, Player... players) {
         var uuid = UUID.randomUUID();
         NamespacedKey worldKey = new NamespacedKey(key.namespace(), uuid.toString());

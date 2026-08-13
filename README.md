@@ -21,11 +21,10 @@ And this plugin is not meant to be used on survival servers. ~~**Your items/poti
 
 - [ ] Player Statistic Registry
 - [ ] Achievement and/or Challenge Registry
-- [ ] Map Voting
-- [X] ~~Map supporting Minigame checks~~
-- [ ] ~~Only supported maps show up in autocomplete~~ (Moved further along; not something I want to focus on at the moment.)
+- [X] Map Voting
+- [X] Map supporting Minigame checks
 - [ ] Game Event Registry
 - [X] Party System
-- [ ] Spectate Menu
+- [X] Spectate Command
 - [ ] Nicknames
 - [ ] Tablist Control
