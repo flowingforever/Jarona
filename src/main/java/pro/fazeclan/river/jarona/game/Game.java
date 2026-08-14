@@ -4,8 +4,8 @@ import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import pro.fazeclan.river.jarona.stats.StatisticDefinition;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -77,6 +77,10 @@ public abstract class Game {
 
     public void removeGameValues(UUID worldUUID) {
         this.gameVariables.remove(worldUUID);
+    }
+
+    public List<StatisticDefinition> getStatDefinitions() {
+        return List.of();
     }
 
 }

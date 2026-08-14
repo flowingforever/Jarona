@@ -24,6 +24,7 @@ dependencies {
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
     implementation("xyz.xenondevs.invui:invui:2.3.0")
+    implementation("org.xerial:sqlite-jdbc:3.53.2.1")
 }
 
 java {
@@ -34,6 +35,7 @@ tasks {
     shadowJar {
         relocate("com.jeff_media.morepersistentdatatypes", "pro.fazeclan.river.jarona.morepersistentdatatypes")
         relocate("xyz.xenondevs.invui", "pro.fazeclan.river.jarona.invui")
+        relocate("org.sqlite", "pro.fazeclan.river.jarona.sqlite")
     }
 
     build {
