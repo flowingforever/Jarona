@@ -9,10 +9,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.util.GameUtil;
 import pro.fazeclan.river.jarona.util.NametagUtil;
+import pro.fazeclan.river.jarona.util.NicknameUtil;
 import pro.fazeclan.river.jarona.util.SchedulingUtil;
 
+import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -22,12 +25,12 @@ public class TablistManager {
 
     public void startTask() {
         this.task = SchedulingUtil.asyncInterval(10, 10, () -> {
-            var manager = (UntNametagManagerPaper) UNTPaperAPI.getInstance().nametagManager();
             for (Player viewer : Bukkit.getOnlinePlayers()) {
                 if (!GameUtil.hasGame(viewer.getWorld())) return;
                 setTabHeaderFooter(viewer);
                 for (Player target : Bukkit.getOnlinePlayers()) {
-                    setTabEntry(manager, viewer, target);
+                    var game = GameUtil.getGame(target.getWorld());
+                    setTabEntry(viewer, target, game);
                 }
             }
         });
@@ -45,8 +48,14 @@ public class TablistManager {
         } catch (IOException ignored) {}
     }
 
-    private void setTabEntry(UntNametagManagerPaper manager, Player viewer, Player target) {
-        var text = PlaceholderAPI.setPlaceholders(target, manager.getEffectiveNametag(target).displayGroups().getFirst().lines().getFirst().text());
+    private void setTabEntry(Player viewer, Player target, @Nullable Game game) {
+        String text = PlaceholderAPI.setPlaceholders(target, NicknameUtil.getNickname(target));
+        if (game != null) {
+            var name = game.getGameValues(viewer.getWorld().getUID()).getValue("tablist_name_" + target.getUniqueId(), "");
+            if (!name.isBlank()) {
+                text = PlaceholderAPI.setPlaceholders(target, name);
+            }
+        }
         NametagUtil.modifyTabName(target, viewer, text);
     }
 

@@ -28,13 +28,17 @@ public class StatisticCommand {
                                             "<green>Your statistics on " + game.getName() + "! <red>[Note: This may take a bit to fetch!]</red></green>"
                                     ));
                                     manager.getAllStats(player.getUniqueId(), game.getKey()).thenAccept(map -> {
-                                        Bukkit.getScheduler().runTask(plugin, () -> {
-                                            for (var entry : map.entrySet()) {
+                                        for (var entry : map.entrySet()) {
+                                            var display = game.getStatDefinitions().stream()
+                                                    .filter(definition -> definition.key().equals(entry.getKey()))
+                                                    .findFirst().orElse(null);
+                                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                                assert display != null;
                                                 player.sendMessage(ServerUtil.formatComponent(
-                                                        "<yellow>" + entry.getKey() + ": " + entry.getValue() + "</yellow>"
+                                                        "<yellow>" + display.display() + ": " + entry.getValue() + "</yellow>"
                                                 ));
-                                            }
-                                        });
+                                            });
+                                        }
                                     });
 
 

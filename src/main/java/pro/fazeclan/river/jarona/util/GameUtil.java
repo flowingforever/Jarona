@@ -110,6 +110,7 @@ public class GameUtil {
         if (game == null) {
             return;
         }
+        game.removeGameValues(world.getUID());
         game.end(world, world.getPlayers());
         cleanUpGame(world);
     }
