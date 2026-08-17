@@ -9,9 +9,12 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
+import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.game.GameManager;
 import pro.fazeclan.river.jarona.listener.PlayerListener;
 import pro.fazeclan.river.jarona.map.GameMapManager;
@@ -98,6 +101,23 @@ public final class Jarona extends JavaPlugin {
         subcommands.add(PartyCommand.command());
         subcommands.add(NicknameCommand.command());
         subcommands.add(StatisticCommand.command());
+
+        gameManager.register(new Game("Empty", Jarona.getKey("empty"), true) {
+            @Override
+            public void init(World world, List<Player> players) {
+
+            }
+
+            @Override
+            public void tick(World world, List<Player> players) {
+
+            }
+
+            @Override
+            public void end(World world, List<Player> players) {
+
+            }
+        });
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             // add each subcommand and register them

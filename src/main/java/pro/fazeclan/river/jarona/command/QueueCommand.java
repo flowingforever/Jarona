@@ -29,6 +29,12 @@ public class QueueCommand {
                                     }
                                     var manager = Jarona.getInstance().getQueueManager();
                                     var game = ctx.getArgument("game", Game.class);
+                                    if (game.getKey().equals(Jarona.getKey("empty"))) {
+                                        source.sendMessage(ServerUtil.formatComponent(
+                                                "<red>This game is not queuable.</red>"
+                                        ));
+                                        return Command.SINGLE_SUCCESS;
+                                    }
 
                                     if (manager.isQueued(player, game)) {
                                         manager.unqueuePlayer(player);
@@ -53,6 +59,12 @@ public class QueueCommand {
                                                     var players = targetResolver.resolve(ctx.getSource());
                                                     var manager = Jarona.getInstance().getQueueManager();
                                                     var game = ctx.getArgument("game", Game.class);
+                                                    if (game.getKey().equals(Jarona.getKey("empty"))) {
+                                                        source.sendMessage(ServerUtil.formatComponent(
+                                                                "<red>This game is not queuable.</red>"
+                                                        ));
+                                                        return Command.SINGLE_SUCCESS;
+                                                    }
 
                                                     for (Player player : players) {
                                                         if (manager.isQueued(player, game)) {

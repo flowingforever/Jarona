@@ -163,6 +163,12 @@ public class PartyCommand {
 
                                     var game = ctx.getArgument("game", Game.class);
                                     var party = manager.getParty(leader);
+                                    if (game.getKey().equals(Jarona.getKey("empty"))) {
+                                        leader.sendMessage(ServerUtil.formatComponent(
+                                                "<red>This game is not queuable.</red>"
+                                        ));
+                                        return Command.SINGLE_SUCCESS;
+                                    }
                                     party.queueMembers(game);
                                     for (var member : party.getPlayers()) {
                                         member.sendMessage(ServerUtil.formatComponent(

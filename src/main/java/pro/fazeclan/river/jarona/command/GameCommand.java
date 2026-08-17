@@ -8,6 +8,7 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.command.argument.GameArgument;
 import pro.fazeclan.river.jarona.command.argument.GameMapArgument;
 import pro.fazeclan.river.jarona.game.Game;
@@ -35,6 +36,12 @@ public class GameCommand {
                                                         .executes(ctx -> {
                                                             final Game game = ctx.getArgument("game", Game.class);
                                                             final GameMap map = ctx.getArgument("map", GameMap.class);
+                                                            if (game.getKey().equals(Jarona.getKey("empty"))) {
+                                                                ctx.getSource().getSender().sendMessage(ServerUtil.formatComponent(
+                                                                        "<red>This game is not queuable.</red>"
+                                                                ));
+                                                                return Command.SINGLE_SUCCESS;
+                                                            }
                                                             if (!game.isRequiresMap()) {
                                                                 ctx.getSource().getSender().sendMessage(ServerUtil.formatComponent(
                                                                         "<red>This game does not require a map! Please select another game that will use a map!</red>"
