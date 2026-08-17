@@ -116,12 +116,18 @@ public class GameUtil {
     }
 
     public static void cleanUpGame(World world) {
-        var mainWorld = WorldUtil.getMainWorld();
-        if (mainWorld == null) {
+        var finalWorldKey = NamespacedKey.fromString(Jarona.getInstance().getConfig().getString("lobby", "minecraft:overworld"));
+        World finalWorld;
+        if (finalWorldKey != null && Bukkit.getWorld(finalWorldKey) != null) {
+            finalWorld = Bukkit.getWorld(finalWorldKey);
+        } else {
+            finalWorld = WorldUtil.getMainWorld();
+        }
+        if (finalWorld == null) {
             return;
         }
         for (Player player : world.getPlayers()) {
-            player.teleport(mainWorld.getSpawnLocation());
+            player.teleport(finalWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
             loadPlayer(player);
         }

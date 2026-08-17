@@ -3,3 +3,4 @@ condition-update-period: 1 # ticks
 chat-format:
   in-game: true
   outside-game: false
+lobby: 'jarona:hns_lobby'
