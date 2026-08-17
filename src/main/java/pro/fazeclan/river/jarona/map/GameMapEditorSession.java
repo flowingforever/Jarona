@@ -3,6 +3,7 @@ package pro.fazeclan.river.jarona.map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class GameMapEditorSession {
 
@@ -133,6 +135,17 @@ public class GameMapEditorSession {
         return YamlConfiguration.loadConfiguration(configFile);
     }
 
+    public void save() {
+        var configFile = new File(world.getWorldFolder(), "map_config.yml");
+        CompletableFuture.runAsync(() -> {
+            try {
+                config.save(configFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public void saveAsMap() {
         var worldFolder = Jarona.getInstance().getDataFolder();
         var saveLocation = new File(worldFolder, "maps/" + getId());
@@ -176,7 +189,8 @@ public class GameMapEditorSession {
     }
 
     private <T> void setValue(String path, T value) {
-        this.config.set(path, value);
+        config.set(path, value);
+        save();
     }
 
 }
