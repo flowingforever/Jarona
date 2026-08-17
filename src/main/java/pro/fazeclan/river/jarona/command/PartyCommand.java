@@ -198,12 +198,11 @@ public class PartyCommand {
                                 return Command.SINGLE_SUCCESS;
                             }
 
-                            var game = ctx.getArgument("game", Game.class);
                             var party = manager.getParty(leader);
                             party.unqueueMembers();
                             for (var member : party.getPlayers()) {
                                 member.sendMessage(ServerUtil.formatComponent(
-                                        "<red>The party has been removed from the queue for " + game.getName() + "!</red>"
+                                        "<red>The party has been removed from the queue!</red>"
                                 ));
                             }
 
