@@ -53,9 +53,21 @@ public class DatabaseManager {
                 );
                 """;
 
+        var achievements = """
+                CREATE TABLE IF NOT EXISTS achievements (
+                    uuid TEXT NOT NULL,
+                    game_id TEXT NOT NULL,
+                    achievement_key TEXT NOT NULL,
+                    achievement_progress INTEGER NOT NULL DEFAULT 0,
+                    PRIMARY KEY (uuid, game_id, achievement_key),
+                    FOREIGN KEY (uuid) REFERENCES players(uuid)
+                );
+                """;
+
         try (Statement statement = connection.createStatement()) {
             statement.execute(players);
             statement.execute(gameStats);
+            statement.execute(achievements);
         }
     }
 

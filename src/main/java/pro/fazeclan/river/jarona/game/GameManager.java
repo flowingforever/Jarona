@@ -9,12 +9,19 @@ import java.util.Map;
 
 public class GameManager {
 
+    private final Jarona plugin;
+
+    public GameManager(Jarona plugin) {
+        this.plugin = plugin;
+    }
+
     @Getter
     protected Map<NamespacedKey, Game> registry = new HashMap<>();
 
     public <G extends Game> G register(G game) {
         this.registry.put(game.getKey(), game);
-        Jarona.getInstance().getStatisticManager().registerDefinitions(game);
+        plugin.getStatisticManager().registerDefinitions(game);
+        plugin.getAchievementManager().registerDefinitions(game);
         return game;
     }
 

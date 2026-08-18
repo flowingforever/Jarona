@@ -21,10 +21,7 @@ import pro.fazeclan.river.jarona.map.GameMapManager;
 import pro.fazeclan.river.jarona.party.PartyManager;
 import pro.fazeclan.river.jarona.placeholder.JaronaExpansion;
 import pro.fazeclan.river.jarona.queue.QueueManager;
-import pro.fazeclan.river.jarona.stats.DatabaseManager;
-import pro.fazeclan.river.jarona.stats.PlayerDataAccess;
-import pro.fazeclan.river.jarona.stats.StatisticManager;
-import pro.fazeclan.river.jarona.stats.StatisticWriteBuffer;
+import pro.fazeclan.river.jarona.stats.*;
 import pro.fazeclan.river.jarona.tablist.TablistManager;
 
 import java.util.ArrayList;
@@ -51,16 +48,20 @@ public final class Jarona extends JavaPlugin {
     PartyManager partyManager;
 
     private DatabaseManager databaseManager;
-    private StatisticWriteBuffer buffer;
+    private StatisticWriteBuffer statisticBuffer;
+    private AchievementWriteBuffer achievementBuffer;
+
     @Getter
     private StatisticManager statisticManager;
+    @Getter
+    private AchievementManager achievementManager;
 
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
         PacketEvents.getAPI().load();
 
-        this.gameManager = new GameManager();
+        this.gameManager = new GameManager(this);
         this.conditionManager = new ConditionManager();
         this.mapManager = new GameMapManager();
         this.tablistManager = new TablistManager();
@@ -85,23 +86,15 @@ public final class Jarona extends JavaPlugin {
         this.databaseManager.connect();
 
         var pda = new PlayerDataAccess(databaseManager);
-        this.buffer = new StatisticWriteBuffer();
-        this.statisticManager = new StatisticManager(databaseManager, pda, buffer);
+        this.statisticBuffer = new StatisticWriteBuffer();
+        this.statisticManager = new StatisticManager(databaseManager, pda, statisticBuffer);
+        this.achievementBuffer = new AchievementWriteBuffer();
+        this.achievementManager = new AchievementManager(databaseManager, pda, achievementBuffer);
 
-        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> this.statisticManager.write(buffer.drain()), 600, 600);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> this.statisticManager.write(statisticBuffer.drain()), 600, 600);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> this.achievementManager.write(achievementBuffer.drain()), 600, 600);
 
-        // commands
-        List<LiteralArgumentBuilder<CommandSourceStack>> subcommands = new ArrayList<>();
-        var command = Commands.literal("jarona");
-        subcommands.add(ConditionCommand.command());
-        subcommands.add(ConfigCommand.command());
-        subcommands.add(MapCommand.command());
-        subcommands.add(QueueCommand.command());
-        subcommands.add(GameCommand.command());
-        subcommands.add(PartyCommand.command());
-        subcommands.add(NicknameCommand.command());
-        subcommands.add(StatisticCommand.command());
-
+        // empty game
         gameManager.register(new Game("Empty", Jarona.getKey("empty"), true) {
             @Override
             public void init(World world, List<Player> players) {
@@ -118,6 +111,19 @@ public final class Jarona extends JavaPlugin {
 
             }
         });
+
+        // commands
+        List<LiteralArgumentBuilder<CommandSourceStack>> subcommands = new ArrayList<>();
+        var command = Commands.literal("jarona");
+        subcommands.add(ConditionCommand.command());
+        subcommands.add(ConfigCommand.command());
+        subcommands.add(MapCommand.command());
+        subcommands.add(QueueCommand.command());
+        subcommands.add(GameCommand.command());
+        subcommands.add(PartyCommand.command());
+        subcommands.add(NicknameCommand.command());
+        subcommands.add(StatisticCommand.command());
+        subcommands.add(AchievementCommand.command());
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             // add each subcommand and register them
@@ -142,7 +148,7 @@ public final class Jarona extends JavaPlugin {
         PacketEvents.getAPI().terminate();
         this.tablistManager.stopTask();
 
-        statisticManager.write(buffer.drain());
+        statisticManager.write(statisticBuffer.drain());
         databaseManager.disconnect();
     }
 

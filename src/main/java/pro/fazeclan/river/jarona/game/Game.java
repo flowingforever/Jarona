@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import pro.fazeclan.river.jarona.stats.AchievementDefinition;
 import pro.fazeclan.river.jarona.stats.StatisticDefinition;
 
 import java.util.List;
@@ -80,6 +81,10 @@ public abstract class Game {
     }
 
     public List<StatisticDefinition> getStatDefinitions() {
+        return List.of();
+    }
+
+    public List<AchievementDefinition> getAchievementDefinitions() {
         return List.of();
     }
 

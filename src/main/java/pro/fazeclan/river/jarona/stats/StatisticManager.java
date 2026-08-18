@@ -35,14 +35,14 @@ public class StatisticManager {
 
     public CompletableFuture<Void> incrementStatistic(UUID uuid, NamespacedKey gameKey, NamespacedKey statKey, long amount) {
         if (isStatUsable(gameKey, statKey)) {
-            buffer.queueIncrement(uuid, gameKey, statKey, amount);
+            return CompletableFuture.runAsync(() -> buffer.queueIncrement(uuid, gameKey, statKey, amount));
         }
         return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<Void> setStatistic(UUID uuid, NamespacedKey gameKey, NamespacedKey statKey, long value) {
         if (isStatUsable(gameKey, statKey)) {
-            buffer.queueSet(uuid, gameKey, statKey, value);
+            return CompletableFuture.runAsync(() -> buffer.queueSet(uuid, gameKey, statKey, value));
         }
         return CompletableFuture.completedFuture(null);
     }
@@ -168,10 +168,7 @@ public class StatisticManager {
         if (definitionList == null) {
             return false;
         }
-        if (definitionList.stream().noneMatch(d -> d.key().equals(statKey))) {
-            return false;
-        }
-        return true;
+        return definitionList.stream().anyMatch(d -> d.key().equals(statKey));
     }
 
     private long getDefaultValue(NamespacedKey gameKey, NamespacedKey statKey) {
