@@ -12,7 +12,6 @@ import pro.fazeclan.river.jarona.util.GameUtil;
 import pro.fazeclan.river.jarona.util.ServerUtil;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class QueueManager {

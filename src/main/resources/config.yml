@@ -2,5 +2,5 @@ start-wait-period: 30 # seconds
 condition-update-period: 1 # ticks
 chat-format:
   in-game: true
-  outside-game: false
+  outside-game: true
 lobby: 'jarona:hns_lobby'
