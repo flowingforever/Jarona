@@ -1,6 +1,7 @@
 package pro.fazeclan.river.jarona.listener;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.event.EventHandler;
@@ -23,7 +24,11 @@ public class PlayerListener implements Listener {
         var mm = MiniMessage.miniMessage();
         event.renderer(
                 (source, sourceDisplayName, message, viewer) ->
-                        NicknameUtil.getNicknameComponent(source).append(mm.deserialize("<gray>: ")).append(message.color(NamedTextColor.GRAY))
+                        mm.deserialize("<head:" + source.getUniqueId() + "> ")
+                                .append(mm.deserialize("<hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source))
+                                        .append(mm.deserialize("<reset><gray>: "))
+                                        .append(message.color(NamedTextColor.GRAY))
+                                )
         );
     }
 
@@ -38,7 +43,11 @@ public class PlayerListener implements Listener {
         var mm = MiniMessage.miniMessage();
         event.renderer(
                 (source, sourceDisplayName, message, viewer) ->
-                        NicknameUtil.getNicknameComponent(source).append(mm.deserialize("<gray>: ")).append(message.color(NamedTextColor.GRAY))
+                        mm.deserialize("<head:" + source.getUniqueId() + "> ")
+                                .append(mm.deserialize("<hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source))
+                                        .append(mm.deserialize("<reset><gray>: "))
+                                        .append(message.color(NamedTextColor.GRAY))
+                                )
         );
     }
 
