@@ -1,6 +1,7 @@
 package pro.fazeclan.river.jarona.util;
 
 import de.tr7zw.nbtapi.NBT;
+import org.alexdev.unlimitednametags.api.UNTPaperAPI;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -116,6 +117,7 @@ public class GameUtil {
     }
 
     public static void cleanUpGame(World world) {
+        var api = UNTPaperAPI.getInstance();
         var finalWorldKey = NamespacedKey.fromString(Jarona.getInstance().getConfig().getString("lobby", "minecraft:overworld"));
         World finalWorld;
         if (finalWorldKey != null && Bukkit.getWorld(finalWorldKey) != null) {
@@ -130,6 +132,7 @@ public class GameUtil {
             player.teleport(finalWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
             loadPlayer(player);
+            api.clearForcedNametag(player);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
         WorldUtil.removeWorld(world);

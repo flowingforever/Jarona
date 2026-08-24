@@ -77,7 +77,10 @@ public abstract class Game {
     }
 
     public void removeGameValues(UUID worldUUID) {
-        this.gameVariables.remove(worldUUID);
+        var values = this.gameVariables.remove(worldUUID);
+        if (values != null) {
+            values.resetValues();
+        }
     }
 
     public List<StatisticDefinition> getStatDefinitions() {

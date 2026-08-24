@@ -21,7 +21,7 @@ public class GameValues {
         return (T) this.variables.getOrDefault(name, def);
     }
 
-    public void resetValues(UUID gameUUID) {
+    public void resetValues() {
         this.variables.clear();
     }
 

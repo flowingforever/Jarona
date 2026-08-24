@@ -86,6 +86,18 @@ public class NicknameCommand {
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
+                )
+                .then(Commands.literal("edit")
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
+
+                            var nickname = NicknameUtil.getNickname(player);
+                            player.sendMessage(ServerUtil.formatComponent(
+                                    "<click:suggest_command:/jarona:nickname set " + nickname + "><green><b>Click here to edit your nickname!</b></green>"
+                            ));
+
+                            return Command.SINGLE_SUCCESS;
+                        })
                 );
     }
 

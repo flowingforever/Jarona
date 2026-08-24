@@ -3,6 +3,7 @@ package pro.fazeclan.river.jarona.listener;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,11 +25,8 @@ public class PlayerListener implements Listener {
         var mm = MiniMessage.miniMessage();
         event.renderer(
                 (source, sourceDisplayName, message, viewer) ->
-                        mm.deserialize("<head:" + source.getUniqueId() + "> ")
-                                .append(mm.deserialize("<hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source))
-                                        .append(mm.deserialize("<reset><gray>: "))
-                                        .append(message.color(NamedTextColor.GRAY))
-                                )
+                        mm.deserialize("<head:" + source.getUniqueId() + "> <hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source) + "<reset><gray>: ")
+                                .append(message.style(Style.style().build()).color(NamedTextColor.GRAY))
         );
     }
 
@@ -43,11 +41,8 @@ public class PlayerListener implements Listener {
         var mm = MiniMessage.miniMessage();
         event.renderer(
                 (source, sourceDisplayName, message, viewer) ->
-                        mm.deserialize("<head:" + source.getUniqueId() + "> ")
-                                .append(mm.deserialize("<hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source))
-                                        .append(mm.deserialize("<reset><gray>: "))
-                                        .append(message.color(NamedTextColor.GRAY))
-                                )
+                        mm.deserialize("<head:" + source.getUniqueId() + "> <hover:show_text:'<gray>" + source.getName() + "</gray>'>" + NicknameUtil.getNickname(source) + "<reset><gray>: ")
+                                .append(message.style(Style.style().build()).color(NamedTextColor.GRAY))
         );
     }
 
