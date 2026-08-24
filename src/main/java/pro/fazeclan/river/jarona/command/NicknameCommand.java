@@ -93,7 +93,7 @@ public class NicknameCommand {
 
                             var nickname = NicknameUtil.getNickname(player);
                             player.sendMessage(ServerUtil.formatComponent(
-                                    "<click:suggest_command:/jarona:nickname set " + nickname + "><green><b>Click here to edit your nickname!</b></green>"
+                                    "<click:suggest_command:'/jarona:nickname set " + nickname + "'><green><b>Click here to edit your nickname!</b></green>"
                             ));
 
                             return Command.SINGLE_SUCCESS;
