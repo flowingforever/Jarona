@@ -72,6 +72,12 @@ public class PartyCommand {
                                         ));
                                         return Command.SINGLE_SUCCESS;
                                     }
+                                    if (manager.isInParty(player)) {
+                                        player.sendMessage(ServerUtil.formatComponent(
+                                                "<red>You are already in a party!</red>"
+                                        ));
+                                        return Command.SINGLE_SUCCESS;
+                                    }
                                     var party = manager.getParty(leader);
                                     if (party == null) {
                                         player.sendMessage(ServerUtil.formatComponent(
@@ -224,7 +230,7 @@ public class PartyCommand {
                             var party = manager.getParty(member);
 
                             member.sendMessage(ServerUtil.formatComponent(
-                                    "<green>Party Members [" + party.getMembers().size() + "]</green>"
+                                    "<green>Party Members [" + party.getPlayers().size() + "]</green>"
                             ));
                             var leader = party.getLeaderPlayer();
                             if (leader == null || !leader.isOnline()) {
