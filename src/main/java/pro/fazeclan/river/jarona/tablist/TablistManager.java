@@ -11,10 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import pro.fazeclan.river.jarona.Jarona;
 import pro.fazeclan.river.jarona.game.Game;
-import pro.fazeclan.river.jarona.util.GameUtil;
-import pro.fazeclan.river.jarona.util.NametagUtil;
-import pro.fazeclan.river.jarona.util.NicknameUtil;
-import pro.fazeclan.river.jarona.util.SchedulingUtil;
+import pro.fazeclan.river.jarona.game.GameValues;
+import pro.fazeclan.river.jarona.util.*;
 
 import javax.annotation.Nullable;
 import java.io.Closeable;
@@ -53,11 +51,12 @@ public class TablistManager {
     private void setTabEntry(Player viewer, Player target, @Nullable Game game) {
         String text = PlaceholderAPI.setPlaceholders(target, NicknameUtil.getNickname(target));
         if (game != null) {
-            TriFunction<Player, Player, NameContext, String> name = game.getGameValues(viewer.getWorld().getUID()).getValue(
+            var gameValues = game.getGameValues(viewer.getWorld().getUID());
+            QuadFunction<Player, Player, NameContext, GameValues, String> name = gameValues.getValue(
                     "name_" + target.getUniqueId(),
-                    (t, v, nameContext) -> "%jarona_nickname%"
+                    (t, v, nameContext, values) -> "%jarona_nickname%"
             );
-            text = PlaceholderAPI.setPlaceholders(target, name.apply(target, viewer, NameContext.TABLIST));
+            text = PlaceholderAPI.setPlaceholders(target, name.apply(target, viewer, NameContext.TABLIST, gameValues));
         }
         NametagUtil.modifyTabName(target, viewer, text);
     }
@@ -65,9 +64,10 @@ public class TablistManager {
     private void setNametag(Player viewer, Player target, @Nullable Game game) {
         if (game != null) {
             var api = UNTPaperAPI.getInstance();
-            TriFunction<Player, Player, NameContext, String> name = game.getGameValues(viewer.getWorld().getUID()).getValue(
+            var gameValues = game.getGameValues(viewer.getWorld().getUID());
+            QuadFunction<Player, Player, NameContext, GameValues, String> name = gameValues.getValue(
                     "name_" + target.getUniqueId(),
-                    (t, v, nameContext) -> "%jarona_nickname%"
+                    (t, v, nameContext, values) -> "%jarona_nickname%"
             );
             api.setForcedNametag(
                     target,
@@ -75,7 +75,7 @@ public class TablistManager {
                     MiniMessage.miniMessage().deserialize(
                             PlaceholderAPI.setPlaceholders(
                                     target,
-                                    name.apply(target, viewer, NameContext.NAMETAG)
+                                    name.apply(target, viewer, NameContext.NAMETAG, gameValues)
                             )
                     )
             );
