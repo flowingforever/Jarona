@@ -16,7 +16,9 @@ import pro.fazeclan.river.jarona.command.*;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.game.GameManager;
-import pro.fazeclan.river.jarona.listener.PlayerListener;
+import pro.fazeclan.river.jarona.listener.ChatListener;
+import pro.fazeclan.river.jarona.listener.PartyListener;
+import pro.fazeclan.river.jarona.listener.StatisticListener;
 import pro.fazeclan.river.jarona.map.GameMapManager;
 import pro.fazeclan.river.jarona.party.PartyManager;
 import pro.fazeclan.river.jarona.placeholder.JaronaExpansion;
@@ -139,7 +141,10 @@ public final class Jarona extends JavaPlugin {
         // config
         saveDefaultConfig();
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        var pluginManager = getServer().getPluginManager();
+        pluginManager.registerEvents(new ChatListener(), this);
+        pluginManager.registerEvents(new PartyListener(this), this);
+        pluginManager.registerEvents(new StatisticListener(), this);
     }
 
     @Override
