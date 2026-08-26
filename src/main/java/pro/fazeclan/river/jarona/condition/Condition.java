@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class Condition implements Comparable<Condition> {
@@ -46,7 +47,7 @@ public abstract class Condition implements Comparable<Condition> {
      */
     @Getter
     @Setter
-    protected Function<Condition, Boolean> hudCondition = (condition) -> false;
+    protected BiFunction<Condition, Player, Boolean> hudCondition = (condition, player) -> false;
 
     /**
      * -- SETTER --
@@ -94,8 +95,8 @@ public abstract class Condition implements Comparable<Condition> {
      * Gets whether the hud should be visible or not.
      * @return A boolean
      */
-    public boolean getHudVisible() {
-        return hudCondition.apply(this);
+    public boolean getHudVisible(Player player) {
+        return hudCondition.apply(this, player);
     }
 
     /**

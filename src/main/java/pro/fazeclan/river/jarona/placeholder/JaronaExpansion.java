@@ -27,7 +27,7 @@ public class JaronaExpansion extends PlaceholderExpansion {
     @Override
     public @Nullable String onPlaceholderRequest(Player player, @NotNull String params) {
         if (params.equals("game_condition")) {
-            return ConditionUtil.worldConditionsToFormattedString(player.getWorld());
+            return ConditionUtil.worldConditionsToFormattedString(player.getWorld(), player);
         } else if (params.equals("nickname")) {
             return NicknameUtil.getNickname(player);
         }

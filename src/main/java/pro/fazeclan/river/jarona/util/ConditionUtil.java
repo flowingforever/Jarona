@@ -24,23 +24,23 @@ public class ConditionUtil {
         return Jarona.getInstance().getConditionManager().getPlayerConditions(player);
     }
 
-    public static String worldConditionsToFormattedString(World world) {
+    public static String worldConditionsToFormattedString(World world, Player player) {
         var text = new StringBuilder();
         var manager = Jarona.getInstance().getConditionManager();
         var worldName = world.getKey().getKey();
         try {
-            text.append(conditionsToFormattedString(manager.getGameConditions(UUID.fromString(worldName))));
+            text.append(conditionsToFormattedString(manager.getGameConditions(UUID.fromString(worldName)), player));
         } catch (Exception ignored) {
             return "";
         }
         return text.toString();
     }
 
-    public static String conditionsToFormattedString(ConditionManager.Conditions conditions) {
+    public static String conditionsToFormattedString(ConditionManager.Conditions conditions, Player player) {
         var sortedConditions = conditions.getConditionMap().values().stream().sorted().toList();
         var builder = new StringBuilder();
         for (Condition condition : sortedConditions) {
-            if (condition.getHudCondition().apply(condition)) {
+            if (condition.getHudCondition().apply(condition, player)) {
                 if (condition.getHud() != null) {
                     if (!builder.isEmpty()) {
                         builder.append(" <gray>◇</gray> ");
