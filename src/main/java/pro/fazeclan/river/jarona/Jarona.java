@@ -2,6 +2,7 @@ package pro.fazeclan.river.jarona;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import de.tr7zw.nbtapi.NBT;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -13,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import pro.fazeclan.river.jarona.command.*;
+import pro.fazeclan.river.jarona.compat.JaronaVoicechatPlugin;
 import pro.fazeclan.river.jarona.condition.ConditionManager;
 import pro.fazeclan.river.jarona.game.Game;
 import pro.fazeclan.river.jarona.game.GameManager;
@@ -32,22 +34,22 @@ import java.util.List;
 public final class Jarona extends JavaPlugin {
 
     @Getter
-    ConditionManager conditionManager;
+    private ConditionManager conditionManager;
 
     @Getter
-    GameManager gameManager;
+    private GameManager gameManager;
 
     @Getter
-    GameMapManager mapManager;
+    private GameMapManager mapManager;
 
     @Getter
-    TablistManager tablistManager;
+    private TablistManager tablistManager;
 
     @Getter
-    QueueManager queueManager;
+    private QueueManager queueManager;
 
     @Getter
-    PartyManager partyManager;
+    private PartyManager partyManager;
 
     private DatabaseManager databaseManager;
     private StatisticWriteBuffer statisticBuffer;
@@ -57,6 +59,9 @@ public final class Jarona extends JavaPlugin {
     private StatisticManager statisticManager;
     @Getter
     private AchievementManager achievementManager;
+
+    @Getter
+    private JaronaVoicechatPlugin voicechatPlugin;
 
     @Override
     public void onLoad() {
@@ -74,6 +79,17 @@ public final class Jarona extends JavaPlugin {
     @Override
     public void onEnable() {
         // dependencies
+        if (getServer().getPluginManager().isPluginEnabled("voicechat")) {
+            var service = getServer().getServicesManager().load(BukkitVoicechatService.class);
+
+            if (service != null) {
+                voicechatPlugin = new JaronaVoicechatPlugin();
+                service.registerPlugin(voicechatPlugin);
+            }
+        } else {
+            getLogger().warning("Simple Voice Chat not loaded, nothing SVC related will work!");
+        }
+
         PacketEvents.getAPI().init();
         NBT.preloadApi();
         new JaronaExpansion().register();

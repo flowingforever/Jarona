@@ -13,6 +13,7 @@ repositories {
     maven { url = uri("https://jitpack.io") }
     maven { url = uri("https://repo.extendedclip.com/releases/") }
     maven { url = uri("https://repo.xenondevs.xyz/releases") }
+    maven { url = uri("https://maven.maxhenkel.de/repository/public") }
 }
 
 dependencies {
@@ -25,6 +26,7 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
     implementation("xyz.xenondevs.invui:invui:2.3.0")
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
+    compileOnly("de.maxhenkel.voicechat:voicechat-api:2.6.20")
 }
 
 java {
