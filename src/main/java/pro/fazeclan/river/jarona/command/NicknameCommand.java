@@ -7,6 +7,10 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import pro.fazeclan.river.jarona.util.NicknameUtil;
 import pro.fazeclan.river.jarona.util.ServerUtil;
@@ -92,9 +96,10 @@ public class NicknameCommand {
                             if (!(ctx.getSource().getSender() instanceof Player player)) return Command.SINGLE_SUCCESS;
 
                             var nickname = NicknameUtil.getNickname(player);
-                            player.sendMessage(ServerUtil.formatComponent(
-                                    "<click:suggest_command:'/jarona:nickname set " + nickname + "'><green><b>Click here to edit your nickname!</b></green>"
-                            ));
+                            player.sendMessage(Component.text("Click here to edit your nickname!")
+                                    .color(NamedTextColor.GREEN)
+                                    .decorate(TextDecoration.BOLD)
+                                    .clickEvent(ClickEvent.runCommand("/jarona:nickname set " + nickname)));
 
                             return Command.SINGLE_SUCCESS;
                         })
