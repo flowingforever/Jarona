@@ -13,6 +13,10 @@ public class GameValues {
         return value;
     }
 
+    public <T> T getValue(String name, Class<T> tClass) {
+        return (T) this.variables.get(name);
+    }
+
     public <T> T getValue(String name) {
         return (T) this.variables.get(name);
     }
