@@ -26,7 +26,7 @@ public class ServerUtil {
 
     public static Component formatComponent(String message) {
         return MiniMessage.miniMessage().deserialize(
-                "<yellow>Jarona</yellow> <gray>></gray> " + message
+                "<yellow>✉</yellow> " + message
         );
     }
 
