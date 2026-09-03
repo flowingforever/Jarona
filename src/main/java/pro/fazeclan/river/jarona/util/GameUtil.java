@@ -135,6 +135,10 @@ public class GameUtil {
             api.clearForcedNametag(player);
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
+        var conditions = ConditionUtil.getWorldConditions(world);
+        if (conditions != null) {
+            conditions.clear();
+        }
         WorldUtil.removeWorld(world);
         if (taskId != null) {
             Bukkit.getScheduler().cancelTask(taskId);
@@ -150,6 +154,8 @@ public class GameUtil {
         player.setLevel(0);
         player.setExp(0);
         player.setGameMode(gameMode);
+
+        ConditionUtil.getPlayerConditions(player).clear();
     }
 
     public static Game getGame(Player player) {
