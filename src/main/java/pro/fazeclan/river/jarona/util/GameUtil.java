@@ -129,10 +129,16 @@ public class GameUtil {
             return;
         }
         for (Player player : world.getPlayers()) {
+            api.get(player).release();
+            for (Player viewer : world.getPlayers()) {
+                api.get(player).release(viewer);
+            }
+        }
+
+        for (var player : world.getPlayers()) {
             player.teleport(finalWorld.getSpawnLocation());
             resetPlayer(player, GameMode.ADVENTURE);
             loadPlayer(player);
-            api.get(player).release();
         }
         var taskId = world.getPersistentDataContainer().get(Jarona.getKey("loop_id"), PersistentDataType.INTEGER);
         var conditions = ConditionUtil.getWorldConditions(world);
