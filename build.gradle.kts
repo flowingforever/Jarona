@@ -19,14 +19,13 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("26.2.build.+")
     compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
-    compileOnly("io.github.alexdev03:unlimitednametags-api-paper:2.0.0")
-    compileOnly("io.github.tofaa2:spigot:3.0.3-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.12.3")
     implementation("com.jeff-media:MorePersistentDataTypes:2.4.0")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
     implementation("xyz.xenondevs.invui:invui:2.3.0")
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
     compileOnly("de.maxhenkel.voicechat:voicechat-api:2.6.20")
+    compileOnly("com.github.Lodestones:Sign-API:1.0.0")
 }
 
 java {

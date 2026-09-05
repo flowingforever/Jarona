@@ -3,8 +3,6 @@ description: $description
 version: '${version}'
 
 main: pro.fazeclan.river.jarona.Jarona
-bootstrapper: pro.fazeclan.river.jarona.JaronaBootstrap
-loader: pro.fazeclan.river.jarona.JaronaLoader
 api-version: '26.2'
 
 authors: [ riversflowing ]
@@ -14,7 +12,7 @@ dependencies:
     packetevents:
       load: BEFORE
       required: true
-    UnlimitedNameTags:
+    Sign:
       load: BEFORE
       required: true
     NBTAPI:

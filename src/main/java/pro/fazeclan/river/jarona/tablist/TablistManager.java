@@ -1,11 +1,9 @@
 package pro.fazeclan.river.jarona.tablist;
 
+import gg.lode.sign.api.SignAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.alexdev.unlimitednametags.api.UNTPaperAPI;
-import org.alexdev.unlimitednametags.api.UntNametagManagerPaper;
-import org.apache.commons.lang3.function.TriFunction;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -17,7 +15,7 @@ import pro.fazeclan.river.jarona.util.*;
 import javax.annotation.Nullable;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.function.BiFunction;
+import java.util.List;
 
 public class TablistManager {
 
@@ -63,16 +61,15 @@ public class TablistManager {
 
     private void setNametag(Player viewer, Player target, @Nullable Game game) {
         if (game != null) {
-            var api = UNTPaperAPI.getInstance();
+            var nametag = SignAPI.getNametagManager().get(target);
             var gameValues = game.getGameValues(viewer.getWorld().getUID());
             QuadFunction<Player, Player, NameContext, GameValues, String> name = gameValues.getValue(
                     "name_" + target.getUniqueId(),
                     (t, v, nameContext, values) -> "%jarona_nickname%"
             );
-            api.setForcedNametag(
-                    target,
+            nametag.setLines(
                     viewer,
-                    MiniMessage.miniMessage().deserialize(
+                    List.of(
                             PlaceholderAPI.setPlaceholders(
                                     target,
                                     name.apply(target, viewer, NameContext.NAMETAG, gameValues)
