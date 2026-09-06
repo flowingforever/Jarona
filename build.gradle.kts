@@ -26,6 +26,7 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.53.2.1")
     compileOnly("de.maxhenkel.voicechat:voicechat-api:2.6.20")
     compileOnly("com.github.Lodestones:Sign-API:1.0.0")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.15.7")
 }
 
 java {
