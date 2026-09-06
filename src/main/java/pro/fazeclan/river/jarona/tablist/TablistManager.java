@@ -62,6 +62,7 @@ public class TablistManager {
     private void setNametag(Player viewer, Player target, @Nullable Game game) {
         if (game != null) {
             var nametag = SignAPI.getNametagManager().get(target);
+            if (nametag == null) return;
             var gameValues = game.getGameValues(viewer.getWorld().getUID());
             QuadFunction<Player, Player, NameContext, GameValues, String> name = gameValues.getValue(
                     "name_" + target.getUniqueId(),
