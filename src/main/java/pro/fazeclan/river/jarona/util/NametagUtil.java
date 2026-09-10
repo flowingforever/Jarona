@@ -11,6 +11,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import pro.fazeclan.river.jarona.game.GameValues;
+import pro.fazeclan.river.jarona.tablist.NameContext;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -138,6 +140,13 @@ public class NametagUtil {
 
     private static void sendPacket(PacketWrapper<?> packet, Player player) {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+    }
+
+    public static void setName(Player player, GameValues values, QuadFunction<Player, Player, NameContext, GameValues, String> function) {
+        values.setValue(
+                "name_" + player.getUniqueId(),
+                function
+        );
     }
 
 }
