@@ -99,7 +99,7 @@ public class NicknameCommand {
                             player.sendMessage(Component.text("Click here to edit your nickname!")
                                     .color(NamedTextColor.GREEN)
                                     .decorate(TextDecoration.BOLD)
-                                    .clickEvent(ClickEvent.runCommand("/jarona:nickname set " + nickname)));
+                                    .clickEvent(ClickEvent.suggestCommand("/jarona:nickname set " + nickname)));
 
                             return Command.SINGLE_SUCCESS;
                         })
